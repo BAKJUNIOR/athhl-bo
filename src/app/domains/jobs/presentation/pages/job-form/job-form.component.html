@@ -1,0 +1,310 @@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+  <app-page-breadcrumb [pageTitle]="isEdit ? 'Modifier l\'offre' : 'Nouvelle offre'" />
+</div>
+
+<!-- Retour -->
+<a routerLink="/jobs" class="mb-6 -mt-4 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" class="stroke-current"><path d="M12.7083 5L7.5 10.2083L12.7083 15.4167" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Retour à la liste des offres
+</a>
+
+@if (loading()) {
+  <div class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-gray-400 dark:border-gray-800 dark:bg-white/[0.03]">
+    <svg class="h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+    <span class="ml-3 text-sm">Chargement de l'offre...</span>
+  </div>
+}
+
+@if (!loading() && loadError()) {
+  <div class="flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white py-20 text-center dark:border-gray-800 dark:bg-white/[0.03]">
+    <span class="max-w-md text-sm text-gray-500 dark:text-gray-400">{{ loadError() }}</span>
+    <app-button variant="outline" size="sm" routerLink="/jobs">Retour à la liste</app-button>
+  </div>
+}
+
+@if (!loading() && !loadError()) {
+  <form (ngSubmit)="submitForm()">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+      <!-- Colonne principale -->
+      <div class="space-y-6 lg:col-span-2">
+
+        @if (formError()) {
+          <div class="rounded-lg border border-error-500 bg-error-50 px-4 py-3 text-sm text-error-600 dark:border-error-500/30 dark:bg-error-500/15 dark:text-error-400">
+            {{ formError() }}
+          </div>
+        }
+
+        <app-component-card title="Informations générales" desc="Titre, domaine et fenêtre de publication de l'offre.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Titre — FR <span class="text-error-500">*</span></app-label>
+              <app-input-field
+                [value]="form().titleFr"
+                (valueChange)="updateForm('titleFr', $any($event))"
+                placeholder="Maçons, coffreurs, ferrailleurs"
+                [error]="titleFrMissing"
+                [hint]="titleFrMissing ? 'Le titre en français est requis.' : undefined"
+              />
+            </div>
+            <div>
+              <app-label>Titre — EN</app-label>
+              <app-input-field
+                [value]="form().titleEn"
+                (valueChange)="updateForm('titleEn', $any($event))"
+                placeholder="Masons, formworkers, rebar workers"
+              />
+            </div>
+            <div>
+              <app-label>Domaine <span class="text-error-500">*</span></app-label>
+              <div class="flex items-center gap-2">
+                <div class="flex-1">
+                  <app-select
+                    [options]="domainOptions()"
+                    [value]="domainIdStr"
+                    placeholder="Choisir un domaine"
+                    (valueChange)="onDomainChange($any($event))"
+                  />
+                </div>
+                <button
+                  type="button"
+                  (click)="openDomainModal()"
+                  class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-white/5"
+                  title="Gérer les domaines"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+              @if (domainMissing) {
+                <p class="mt-1.5 text-xs text-error-500">Le domaine est requis.</p>
+              }
+            </div>
+            <div>
+              <app-label>Téléphone de contact</app-label>
+              <app-input-field
+                [value]="form().contactPhone"
+                (valueChange)="updateForm('contactPhone', $any($event))"
+                placeholder="+2250709993347"
+              />
+            </div>
+            <div>
+              <app-label>Informations pratiques — FR</app-label>
+              <app-input-field
+                [value]="form().metaFr"
+                (valueChange)="updateForm('metaFr', $any($event))"
+                placeholder="Abidjan · CDD de chantier · temps plein · 2 ans minimum"
+              />
+            </div>
+            <div>
+              <app-label>Informations pratiques — EN</app-label>
+              <app-input-field
+                [value]="form().metaEn"
+                (valueChange)="updateForm('metaEn', $any($event))"
+                placeholder="Abidjan · fixed-term contract · full-time · 2 years min."
+              />
+            </div>
+            <div>
+              <app-date-picker
+                id="job-published-at"
+                label="Date de publication"
+                placeholder="AAAA-MM-JJ"
+                [defaultDate]="form().publishedAt"
+                (dateChange)="onPublishedAtChange($event.dateStr)"
+              />
+            </div>
+            <div>
+              <app-date-picker
+                id="job-deadline"
+                label="Date de clôture *"
+                placeholder="AAAA-MM-JJ"
+                [defaultDate]="form().deadline"
+                (dateChange)="onDeadlineChange($event.dateStr)"
+              />
+              @if (deadlineMissing) {
+                <p class="mt-1.5 text-xs text-error-500">La date de clôture est requise.</p>
+              }
+            </div>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Description" desc="Texte d'introduction affiché en tête de l'offre.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Description — FR</app-label>
+              <app-text-area
+                [value]="form().descriptionFr"
+                (valueChange)="updateForm('descriptionFr', $any($event))"
+                [rows]="4"
+                placeholder="Présentation courte du poste."
+              />
+            </div>
+            <div>
+              <app-label>Description — EN</app-label>
+              <app-text-area
+                [value]="form().descriptionEn"
+                (valueChange)="updateForm('descriptionEn', $any($event))"
+                [rows]="4"
+                placeholder="Short role overview."
+              />
+            </div>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Missions" desc="Ce que fera la personne recrutée, une puce par ligne.">
+          <div class="space-y-3">
+            @for (m of form().missions; track $index) {
+              <div class="flex items-start gap-3 rounded-xl border border-gray-200 p-3 dark:border-gray-800">
+                <span class="mt-2.5 text-xs font-medium text-gray-400">{{ $index + 1 }}.</span>
+                <div class="grid flex-1 grid-cols-1 gap-2 sm:grid-cols-2">
+                  <app-input-field [value]="m.fr" (valueChange)="updateMission($index, 'fr', $any($event))" placeholder="Mission — FR" />
+                  <app-input-field [value]="m.en" (valueChange)="updateMission($index, 'en', $any($event))" placeholder="Mission — EN" />
+                </div>
+                @if (form().missions.length > 1) {
+                  <button type="button" (click)="removeMission($index)" class="mt-2.5 text-xs font-medium text-error-500 hover:text-error-600">Retirer</button>
+                }
+              </div>
+            }
+            <button type="button" (click)="addMission()" class="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-gray-300 py-3 text-sm font-medium text-gray-500 hover:border-brand-300 hover:text-brand-500 dark:border-gray-700">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+              Ajouter une mission
+            </button>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Profil recherché" desc="Les critères attendus, une puce par ligne.">
+          <div class="space-y-3">
+            @for (p of form().profile; track $index) {
+              <div class="flex items-start gap-3 rounded-xl border border-gray-200 p-3 dark:border-gray-800">
+                <span class="mt-2.5 text-xs font-medium text-gray-400">{{ $index + 1 }}.</span>
+                <div class="grid flex-1 grid-cols-1 gap-2 sm:grid-cols-2">
+                  <app-input-field [value]="p.fr" (valueChange)="updateProfileItem($index, 'fr', $any($event))" placeholder="Critère — FR" />
+                  <app-input-field [value]="p.en" (valueChange)="updateProfileItem($index, 'en', $any($event))" placeholder="Critère — EN" />
+                </div>
+                @if (form().profile.length > 1) {
+                  <button type="button" (click)="removeProfileItem($index)" class="mt-2.5 text-xs font-medium text-error-500 hover:text-error-600">Retirer</button>
+                }
+              </div>
+            }
+            <button type="button" (click)="addProfileItem()" class="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-gray-300 py-3 text-sm font-medium text-gray-500 hover:border-brand-300 hover:text-brand-500 dark:border-gray-700">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+              Ajouter un critère
+            </button>
+          </div>
+        </app-component-card>
+      </div>
+
+      <!-- Colonne latérale : statut, actions, aperçu -->
+      <div class="space-y-6 lg:sticky lg:top-6 lg:self-start">
+        <app-component-card title="Publication">
+          <div class="flex items-center justify-between">
+            <app-switch
+              label="Publiée"
+              [defaultChecked]="form().status === 'published'"
+              (valueChange)="onStatusChange($event)"
+            />
+            <app-badge size="sm" [color]="form().status === 'published' ? 'success' : 'warning'">
+              {{ statusLabel(form().status) }}
+            </app-badge>
+          </div>
+          <p class="mt-3 text-xs text-gray-400">
+            Une offre en brouillon reste modifiable ici mais n'apparaît pas sur le site vitrine.
+          </p>
+
+          <div class="mt-5 flex gap-3 border-t border-gray-100 pt-5 dark:border-white/[0.05]">
+            <app-button class="flex-1" className="w-full" variant="outline" size="sm" [disabled]="saving()" (btnClick)="cancel()">Annuler</app-button>
+            <app-button class="flex-1" className="w-full" size="sm" [disabled]="saving()" (btnClick)="submitForm()">
+              {{ saving() ? 'Enregistrement...' : (isEdit ? 'Enregistrer' : 'Créer l\'offre') }}
+            </app-button>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Aperçu" desc="Ce que verra un visiteur du site vitrine.">
+          <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+            <app-badge size="sm" color="info">{{ selectedDomainLabel }}</app-badge>
+            <h5 class="mt-2 font-medium text-gray-800 dark:text-white/90">
+              {{ form().titleFr || 'Titre de l\'offre' }}
+            </h5>
+            <p class="mt-1 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+              {{ form().metaFr || 'Les informations pratiques apparaîtront ici.' }}
+            </p>
+            <p class="mt-3 text-xs text-gray-400">Clôture le {{ form().deadline || '—' }}</p>
+          </div>
+        </app-component-card>
+      </div>
+    </div>
+  </form>
+}
+
+<!-- Modale : gestion des domaines (liste ouverte, pas un enum) -->
+<app-modal [isOpen]="domainModalOpen()" (close)="closeDomainModal()" className="max-w-2xl w-full m-4 p-7">
+  <h3 class="mb-1 text-lg font-semibold text-gray-800 dark:text-white/90">Gérer les domaines</h3>
+  <p class="mb-5 text-sm text-gray-500 dark:text-gray-400">
+    Les métiers proposés dans la liste déroulante. Modifie, supprime ou ajoutes-en un nouveau.
+  </p>
+
+  <div class="max-h-96 space-y-2 overflow-y-auto pr-1">
+    @for (domain of domains(); track domain.id) {
+      <div class="flex items-center gap-2 rounded-lg border border-gray-200 p-2 dark:border-gray-800">
+        <input
+          type="text"
+          [value]="domainDraft(domain.id).labelFr"
+          (input)="updateDomainDraft(domain.id, 'labelFr', $any($event.target).value)"
+          placeholder="Libellé — FR"
+          class="h-9 w-1/2 rounded-md border border-gray-300 bg-white px-2.5 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+        />
+        <input
+          type="text"
+          [value]="domainDraft(domain.id).labelEn"
+          (input)="updateDomainDraft(domain.id, 'labelEn', $any($event.target).value)"
+          placeholder="Libellé — EN"
+          class="h-9 w-1/2 rounded-md border border-gray-300 bg-white px-2.5 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+        />
+        <button
+          type="button"
+          (click)="saveDomainEdit(domain)"
+          [disabled]="savingDomainId() === domain.id"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-success-600 hover:bg-success-50 disabled:opacity-40 dark:hover:bg-success-500/10"
+          title="Enregistrer"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button
+          type="button"
+          (click)="deleteDomain(domain)"
+          [disabled]="deletingDomainId() === domain.id"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-error-500 hover:bg-error-50 disabled:opacity-40 dark:hover:bg-error-500/10"
+          title="Supprimer"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M4 7h16M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2m2 0v13a2 2 0 01-2 2H9a2 2 0 01-2-2V7h10z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    } @empty {
+      <p class="py-4 text-center text-sm text-gray-400">Aucun domaine pour l'instant.</p>
+    }
+  </div>
+
+  <div class="mt-4 flex items-center gap-2 border-t border-gray-100 pt-4 dark:border-white/[0.05]">
+    <input
+      type="text"
+      [value]="newDomainLabelFr()"
+      (input)="newDomainLabelFr.set($any($event.target).value)"
+      placeholder="Nouveau métier — FR"
+      class="h-9 w-1/2 rounded-md border border-gray-300 bg-white px-2.5 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+    />
+    <input
+      type="text"
+      [value]="newDomainLabelEn()"
+      (input)="newDomainLabelEn.set($any($event.target).value)"
+      (keydown.enter)="addDomain()"
+      placeholder="Nouveau métier — EN"
+      class="h-9 w-1/2 rounded-md border border-gray-300 bg-white px-2.5 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+    />
+    <app-button size="sm" [disabled]="savingNewDomain() || !newDomainLabelFr().trim()" (btnClick)="addDomain()">
+      {{ savingNewDomain() ? '...' : 'Ajouter' }}
+    </app-button>
+  </div>
+
+  <div class="mt-5 flex justify-end">
+    <app-button variant="outline" size="sm" (btnClick)="closeDomainModal()">Fermer</app-button>
+  </div>
+</app-modal>

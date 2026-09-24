@@ -1,0 +1,13 @@
+@if (isOpen) {
+<div
+  #dropdownRef
+  class="z-[9999] rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+  [ngClass]="fixedPosition
+    ? ['fixed', fixedStyle ? '' : 'invisible', className]
+    : ['absolute', 'mt-2', className.includes('right-') || className.includes('left-') || className.includes('start-') || className.includes('end-') ? '' : 'ltr:right-0 rtl:left-0', className]"
+  [style.top]="fixedPosition ? fixedStyle?.top : null"
+  [style.left]="fixedPosition ? fixedStyle?.left : null"
+>
+  <ng-content></ng-content>
+</div>
+}

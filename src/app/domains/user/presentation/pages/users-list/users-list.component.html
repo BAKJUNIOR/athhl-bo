@@ -1,0 +1,328 @@
+<app-page-breadcrumb pageTitle="Gestion des utilisateurs" />
+
+<!-- Stats -->
+<div class="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+  <div class="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <span class="text-sm text-gray-500 dark:text-gray-400">Total</span>
+      <h4 class="text-2xl font-semibold text-gray-800 dark:text-white/90">{{ stats().total }}</h4>
+    </div>
+  </div>
+  <div class="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-500">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 4L12 14.01l-3-3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <span class="text-sm text-gray-500 dark:text-gray-400">Actifs</span>
+      <h4 class="text-2xl font-semibold text-success-600 dark:text-success-500">{{ stats().active }}</h4>
+    </div>
+  </div>
+  <div class="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-warning-50 text-warning-500 dark:bg-warning-500/10">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="stroke-current"><rect x="5" y="11" width="14" height="9" rx="2" stroke-width="1.5"/><path d="M8 11V8a4 4 0 018 0v3" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div>
+      <span class="text-sm text-gray-500 dark:text-gray-400">Inactifs / bloqués</span>
+      <h4 class="text-2xl font-semibold text-warning-500">{{ stats().inactive }}</h4>
+    </div>
+  </div>
+  <div class="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-500 dark:bg-brand-500/10">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M12 2l8 4v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-4z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <span class="text-sm text-gray-500 dark:text-gray-400">Super administrateurs</span>
+      <h4 class="text-2xl font-semibold text-brand-500">{{ stats().admins }}</h4>
+    </div>
+  </div>
+</div>
+
+<app-component-card title="Utilisateurs du back-office" desc="Créez des accès et gérez les comptes existants.">
+  <!-- Barre d'outils -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div class="relative flex-1 sm:max-w-sm">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 stroke-current text-gray-400"><circle cx="11" cy="11" r="7" stroke-width="1.5"/><path d="M21 21l-4.35-4.35" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input
+        type="text"
+        placeholder="Rechercher par nom, email, téléphone..."
+        class="h-11 w-full rounded-lg border border-gray-300 bg-transparent pl-10 pr-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
+        [value]="search()"
+        (input)="search.set($any($event.target).value)"
+      />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        (click)="toggleFilters()"
+        class="inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition"
+        [ngClass]="filtersOpen() || roleFilter() || statusFilter()
+          ? 'border-brand-300 bg-brand-50 text-brand-600 dark:border-brand-800 dark:bg-brand-500/10 dark:text-brand-400'
+          : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-white/5'"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M4 6h16M7 12h10M10 18h4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Filtrer
+        @if (activeFilterCount() >= 2) {
+          <span class="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1 text-[11px] font-semibold text-white">
+            {{ activeFilterCount() }}
+          </span>
+        }
+      </button>
+      <app-button size="sm" (btnClick)="openCreate()">
+        <span class="flex items-center gap-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+          Nouvel utilisateur
+        </span>
+      </app-button>
+    </div>
+  </div>
+
+  @if (filtersOpen()) {
+    <div class="mt-3 flex flex-wrap items-end gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-800 dark:bg-white/[0.02]">
+      <div class="w-48">
+        <app-select
+          [options]="roleFilterOptions"
+          [value]="roleFilter()"
+          placeholder="Rôle"
+          (valueChange)="roleFilter.set($any($event))"
+        />
+      </div>
+      <div class="w-52">
+        <app-select
+          [options]="statusFilterOptions"
+          [value]="statusFilter()"
+          placeholder="Statut"
+          (valueChange)="statusFilter.set($any($event))"
+        />
+      </div>
+    </div>
+  }
+
+  <!-- État de chargement -->
+  @if (loading()) {
+    <div class="flex items-center justify-center py-16 text-gray-400">
+      <svg class="h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+      <span class="ml-3 text-sm">Chargement des utilisateurs...</span>
+    </div>
+  }
+
+  <!-- Erreur -->
+  @if (!loading() && error()) {
+    <div class="flex flex-col items-center gap-3 py-16 text-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">{{ error() }}</span>
+      <app-button variant="outline" size="sm" (btnClick)="loadUsers()">Réessayer</app-button>
+    </div>
+  }
+
+  <!-- Tableau -->
+  @if (!loading() && !error()) {
+    <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-white/[0.05]">
+      <div class="max-w-full overflow-x-auto">
+        <table class="min-w-full">
+          <thead class="border-b border-gray-100 dark:border-white/[0.05]">
+            <tr>
+              <th class="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Utilisateur</th>
+              <th class="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Téléphone</th>
+              <th class="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Rôle</th>
+              <th class="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Statut</th>
+              <th class="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Créé le</th>
+              <th class="px-5 py-3 text-end text-theme-xs font-medium text-gray-500 dark:text-gray-400">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
+            @for (u of filteredUsers(); track u.id) {
+              <tr>
+                <td class="px-5 py-4 text-start sm:px-6">
+                  <div class="flex items-center gap-3">
+                    @if (u.profilePictureUrl) {
+                      <img
+                        [src]="u.profilePictureUrl"
+                        [alt]="fullName(u)"
+                        class="h-10 w-10 shrink-0 rounded-full object-cover"
+                      />
+                    } @else {
+                      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-500 text-sm font-medium text-white">
+                        {{ initials(u) }}
+                      </div>
+                    }
+                    <div>
+                      <span class="block font-medium text-gray-800 text-theme-sm dark:text-white/90">{{ fullName(u) }}</span>
+                      <span class="block text-theme-xs text-gray-500 dark:text-gray-400">{{ u.email }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-4 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                  {{ u.phoneNumber || '—' }}
+                </td>
+                <td class="px-4 py-4 text-start">
+                  <app-badge size="sm" [color]="u.roles[0]?.roleName === 'SUPER_ADMIN' ? 'primary' : 'info'">
+                    {{ roleLabel(u) }}
+                  </app-badge>
+                </td>
+                <td class="px-4 py-4 text-start">
+                  <app-badge size="sm" [color]="u.active ? 'success' : 'warning'">
+                    {{ u.active ? 'Actif' : 'Inactif / bloqué' }}
+                  </app-badge>
+                </td>
+                <td class="px-4 py-4 text-start text-theme-sm text-gray-500 dark:text-gray-400">
+                  {{ formatDate(u.creationDate) }}
+                </td>
+                <td class="px-4 py-4 text-end" (click)="$event.stopPropagation()">
+                  <div class="relative inline-block dropdown-toggle">
+                    <button
+                      type="button"
+                      class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/[0.05]"
+                      (click)="toggleMenu(u.id)"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="fill-current"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                    </button>
+                    <app-dropdown [isOpen]="openMenuId() === u.id" (close)="closeMenu()" [fixedPosition]="true" className="w-56">
+                      @if (u.active) {
+                        <app-dropdown-item (click)="askBlock(u)">
+                          <span class="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="shrink-0 stroke-current"><rect x="5" y="11" width="14" height="9" rx="2" stroke-width="1.5"/><path d="M8 11V8a4 4 0 018 0v3" stroke-width="1.5" stroke-linecap="round"/></svg>
+                            Bloquer
+                          </span>
+                        </app-dropdown-item>
+                      } @else {
+                        <app-dropdown-item (click)="askUnblock(u)">
+                          <span class="flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="shrink-0 stroke-current"><rect x="5" y="11" width="14" height="9" rx="2" stroke-width="1.5"/><path d="M8 11V8a4 4 0 017.94-.8" stroke-width="1.5" stroke-linecap="round"/></svg>
+                            Débloquer
+                          </span>
+                        </app-dropdown-item>
+                      }
+                      <app-dropdown-item (click)="askResetPassword(u)">
+                        <span class="flex items-center gap-2">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="shrink-0 stroke-current"><circle cx="8" cy="15" r="3" stroke-width="1.5"/><path d="M10.5 12.5L19 4M19 4h-4M19 4v4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          Réinitialiser le mot de passe
+                        </span>
+                      </app-dropdown-item>
+                      <app-dropdown-item
+                        baseClassName="block w-full text-left px-4 py-2 text-sm text-error-500 hover:bg-error-50 dark:hover:bg-error-500/15"
+                        (click)="askDelete(u)"
+                      >
+                        <span class="flex items-center gap-2">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="shrink-0 stroke-current"><path d="M4 7h16M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2m2 0v13a2 2 0 01-2 2H9a2 2 0 01-2-2V7h10z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                          Supprimer
+                        </span>
+                      </app-dropdown-item>
+                    </app-dropdown>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6">
+                  <div class="flex flex-col items-center gap-2 py-16 text-center text-gray-400">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="text-sm">Aucun utilisateur ne correspond à cette recherche.</span>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</app-component-card>
+
+<!-- Modale : nouvel utilisateur -->
+<app-modal [isOpen]="createOpen()" (close)="closeCreate()" className="max-w-2xl m-4 p-6">
+  <h3 class="mb-1 text-lg font-semibold text-gray-800 dark:text-white/90">Nouvel utilisateur</h3>
+  <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
+    Un email d'activation avec un code sera envoyé à l'adresse renseignée. Aucun mot de passe n'est défini ici.
+  </p>
+
+  @if (createError()) {
+    <div class="mb-5 rounded-lg border border-error-500 bg-error-50 px-4 py-3 text-sm text-error-600 dark:border-error-500/30 dark:bg-error-500/15 dark:text-error-400">
+      {{ createError() }}
+    </div>
+  }
+
+  <form (ngSubmit)="submitCreate()" class="space-y-5">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <app-label>Prénom <span class="text-error-500">*</span></app-label>
+        <app-input-field
+          [value]="createForm().firstName"
+          (valueChange)="updateCreateForm('firstName', $any($event))"
+          placeholder="Jean"
+          [error]="firstNameMissing"
+          [hint]="firstNameHint"
+        />
+      </div>
+      <div>
+        <app-label>Nom <span class="text-error-500">*</span></app-label>
+        <app-input-field
+          [value]="createForm().lastName"
+          (valueChange)="updateCreateForm('lastName', $any($event))"
+          placeholder="Kouassi"
+          [error]="lastNameMissing"
+          [hint]="lastNameHint"
+        />
+      </div>
+    </div>
+
+    <div>
+      <app-label>Email <span class="text-error-500">*</span></app-label>
+      <app-input-field
+        type="email"
+        [value]="createForm().email"
+        (valueChange)="updateCreateForm('email', $any($event))"
+        placeholder="jean.kouassi@athl-logistics.ci"
+        [error]="emailInvalid"
+        [hint]="emailHint"
+      />
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <app-label>Téléphone</app-label>
+        <app-input-field
+          [value]="createForm().phoneNumber ?? ''"
+          (valueChange)="updateCreateForm('phoneNumber', $any($event))"
+          placeholder="+225 07 00 00 00 00"
+        />
+      </div>
+      <div>
+        <app-label>Rôle <span class="text-error-500">*</span></app-label>
+        <app-select
+          [options]="roleOptions"
+          [value]="createForm().roleName"
+          (valueChange)="updateCreateForm('roleName', $any($event))"
+        />
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-2">
+      <app-button variant="outline" size="sm" [disabled]="creating()" (btnClick)="closeCreate()">Annuler</app-button>
+      <app-button size="sm" [disabled]="creating()" (btnClick)="submitCreate()">
+        {{ creating() ? 'Création...' : "Créer l'utilisateur" }}
+      </app-button>
+    </div>
+  </form>
+</app-modal>
+
+<!-- Modale : confirmation d'action -->
+@if (confirm(); as c) {
+  <app-modal [isOpen]="true" (close)="cancelConfirm()" className="max-w-md m-4 p-6">
+    <h3 class="mb-2 text-lg font-semibold text-gray-800 dark:text-white/90">{{ c.title }}</h3>
+    <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">{{ c.description }}</p>
+    <div class="flex justify-end gap-3">
+      <app-button variant="outline" size="sm" [disabled]="confirming()" (btnClick)="cancelConfirm()">Annuler</app-button>
+      <app-button
+        size="sm"
+        [className]="c.danger ? '!bg-error-500 hover:!bg-error-600' : ''"
+        [disabled]="confirming()"
+        (btnClick)="runConfirm()"
+      >
+        {{ confirming() ? 'Patientez...' : c.confirmLabel }}
+      </app-button>
+    </div>
+  </app-modal>
+}

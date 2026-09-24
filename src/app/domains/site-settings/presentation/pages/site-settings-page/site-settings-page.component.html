@@ -1,0 +1,250 @@
+<app-page-breadcrumb pageTitle="Paramètres du site" />
+
+@if (loading()) {
+  <div class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-16 text-gray-400 dark:border-gray-800 dark:bg-white/[0.03]">
+    <svg class="h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+    <span class="ml-3 text-sm">Chargement...</span>
+  </div>
+}
+
+@if (!loading() && error()) {
+  <div class="flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white py-16 text-center dark:border-gray-800 dark:bg-white/[0.03]">
+    <span class="max-w-md text-sm text-gray-500 dark:text-gray-400">{{ error() }}</span>
+    <app-button variant="outline" size="sm" (btnClick)="load()">Réessayer</app-button>
+  </div>
+}
+
+@if (!loading() && !error()) {
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+  <!-- Colonne principale -->
+  <div class="space-y-8 lg:col-span-2">
+    <app-component-card
+      title="Compteurs animés de l'accueil"
+      desc="Ces 3 chiffres apparaissent sur l'accueil, la page À propos et la page Équipe. Le libellé reste géré par les traductions du site ; ici on ne pilote que la valeur affichée."
+    >
+      <div class="space-y-5">
+        @for (s of stats(); track s.key; let i = $index) {
+          <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+            <div class="mb-3 flex items-center justify-between">
+              <span class="font-medium text-gray-800 dark:text-white/90">{{ s.label }}</span>
+              <span class="text-sm text-gray-400">
+                Aperçu : {{ s.value.toLocaleString('fr-FR', { minimumFractionDigits: s.decimals, maximumFractionDigits: s.decimals }) }}{{ s.suffix }}
+              </span>
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div>
+                <app-label>
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" class="shrink-0 stroke-current text-gray-400"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Valeur
+                  </span>
+                </app-label>
+                <app-input-field
+                  type="number"
+                  [value]="s.value"
+                  (valueChange)="updateStat(i, 'value', $any($event))"
+                />
+              </div>
+              <div>
+                <app-label>
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" class="shrink-0 stroke-current text-gray-400"><circle cx="12" cy="12" r="9" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke-width="1.5"/></svg>
+                    Décimales
+                  </span>
+                </app-label>
+                <app-input-field
+                  type="number"
+                  [value]="s.decimals"
+                  (valueChange)="updateStat(i, 'decimals', $any($event))"
+                />
+              </div>
+              <div>
+                <app-label>
+                  <span class="inline-flex items-center gap-1.5">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" class="shrink-0 stroke-current text-gray-400"><path d="M12.59 2.59A2 2 0 0011.17 2H4a2 2 0 00-2 2v7.17a2 2 0 00.59 1.41l9 9a2 2 0 002.82 0l7.17-7.17a2 2 0 000-2.82l-9-9z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="7" r="1" stroke-width="1.5"/></svg>
+                    Suffixe
+                  </span>
+                </app-label>
+                <app-input-field
+                  [value]="s.suffix"
+                  (valueChange)="updateStat(i, 'suffix', $any($event))"
+                  placeholder="+, M€..."
+                />
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </app-component-card>
+
+    <app-component-card
+      title="Coordonnées & réseaux sociaux"
+      desc="Numéros affichés dans le pied de page et la page Contact du site, et liens vers les réseaux sociaux."
+    >
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div>
+          <app-label>
+            <span class="inline-flex items-center gap-2">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              Téléphone 1
+            </span>
+          </app-label>
+          <app-input-field
+            [value]="contact().phone1"
+            (valueChange)="updateContact('phone1', $any($event))"
+            placeholder="+225 07 78 09 58 58"
+          />
+        </div>
+        <div>
+          <app-label>
+            <span class="inline-flex items-center gap-2">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              Téléphone 2
+            </span>
+          </app-label>
+          <app-input-field
+            [value]="contact().phone2"
+            (valueChange)="updateContact('phone2', $any($event))"
+            placeholder="+225 07 09 99 33 47"
+          />
+        </div>
+        <div>
+          <app-label>
+            <span class="inline-flex items-center gap-2">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-500/10 dark:text-success-500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              Téléphone 3
+            </span>
+          </app-label>
+          <app-input-field
+            [value]="contact().phone3"
+            (valueChange)="updateContact('phone3', $any($event))"
+            placeholder="+225 07 58 60 16 27"
+          />
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <app-label>
+          <span class="inline-flex items-center gap-2">
+            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-warning-50 text-warning-500 dark:bg-warning-500/10">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" stroke-width="1.5"/></svg>
+            </span>
+            Adresse
+          </span>
+        </app-label>
+        <app-input-field
+          [value]="contact().address"
+          (valueChange)="updateContact('address', $any($event))"
+          placeholder="Abidjan, Côte d'Ivoire"
+        />
+      </div>
+
+      <div class="mt-5 grid grid-cols-1 gap-4 border-t border-gray-100 pt-5 dark:border-white/[0.05] sm:grid-cols-2">
+        <div>
+          <app-label>
+            <span class="inline-flex items-center gap-2">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-light-50 text-blue-light-500 dark:bg-blue-light-500/10">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M14 9h3V5h-3a4 4 0 00-4 4v2H7v4h3v7h4v-7h3l1-4h-4V9a1 1 0 011-1z" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              </span>
+              Facebook
+            </span>
+          </app-label>
+          <app-input-field
+            [value]="contact().facebookUrl"
+            (valueChange)="updateContact('facebookUrl', $any($event))"
+            placeholder="https://facebook.com/..."
+          />
+        </div>
+        <div>
+          <app-label>
+            <span class="inline-flex items-center gap-2">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-error-50 text-error-500 dark:bg-error-500/10">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><rect x="2" y="5" width="20" height="14" rx="4" stroke-width="1.5"/><path d="M10 9l5 3-5 3V9z" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              </span>
+              YouTube
+            </span>
+          </app-label>
+          <app-input-field
+            [value]="contact().youtubeUrl"
+            (valueChange)="updateContact('youtubeUrl', $any($event))"
+            placeholder="https://youtube.com/..."
+          />
+        </div>
+        <div>
+          <app-label>
+            <span class="inline-flex items-center gap-2">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-purple-500/10 text-purple-500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><rect x="3" y="3" width="18" height="18" rx="5" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              </span>
+              Instagram
+            </span>
+          </app-label>
+          <app-input-field
+            [value]="contact().instagramUrl"
+            (valueChange)="updateContact('instagramUrl', $any($event))"
+            placeholder="https://instagram.com/..."
+          />
+        </div>
+        <div>
+          <app-label>
+            <span class="inline-flex items-center gap-2">
+              <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><rect x="3" y="3" width="18" height="18" rx="3" stroke-width="1.5"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 014 0v4M11 13v4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              LinkedIn
+            </span>
+          </app-label>
+          <app-input-field
+            [value]="contact().linkedinUrl"
+            (valueChange)="updateContact('linkedinUrl', $any($event))"
+            placeholder="https://linkedin.com/..."
+          />
+        </div>
+      </div>
+    </app-component-card>
+  </div>
+
+  <!-- Colonne latérale : enregistrement, aperçu -->
+  <div class="space-y-6 lg:sticky lg:top-6 lg:self-start">
+    <app-component-card title="Enregistrement">
+      <p class="text-xs text-gray-400">
+        Les compteurs de l'accueil et les coordonnées sont enregistrés ensemble, en un seul clic.
+      </p>
+      <div class="mt-5 flex border-t border-gray-100 pt-5 dark:border-white/[0.05]">
+        <app-button class="flex-1" className="w-full" size="sm" [disabled]="saving()" (btnClick)="save()">
+          {{ saving() ? 'Enregistrement...' : 'Enregistrer' }}
+        </app-button>
+      </div>
+    </app-component-card>
+
+    <app-component-card title="Aperçu" desc="Ce que verra un visiteur du site vitrine.">
+      <div class="space-y-4">
+        <div class="flex justify-between gap-3 text-sm">
+          @for (s of stats(); track s.key) {
+            <div class="text-center">
+              <div class="font-semibold text-gray-800 dark:text-white/90">
+                {{ s.value.toLocaleString('fr-FR', { minimumFractionDigits: s.decimals, maximumFractionDigits: s.decimals }) }}{{ s.suffix }}
+              </div>
+              <div class="text-xs text-gray-400">{{ s.label }}</div>
+            </div>
+          }
+        </div>
+
+        <div class="space-y-1.5 border-t border-gray-100 pt-4 text-sm text-gray-500 dark:border-white/[0.05] dark:text-gray-400">
+          <div>{{ contact().phone1 || '—' }}</div>
+          @if (contact().phone2) { <div>{{ contact().phone2 }}</div> }
+          @if (contact().phone3) { <div>{{ contact().phone3 }}</div> }
+          <div class="pt-1 text-xs text-gray-400">{{ contact().address || '—' }}</div>
+        </div>
+      </div>
+    </app-component-card>
+  </div>
+  </div>
+}

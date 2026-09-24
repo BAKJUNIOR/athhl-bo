@@ -1,0 +1,79 @@
+<app-page-breadcrumb pageTitle="Notifications" />
+
+<app-component-card title="Toutes les notifications" [desc]="unreadCount() + ' non lue(s)'">
+  <!-- Barre d'outils -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div class="inline-flex items-center gap-1 rounded-full border border-gray-200 p-1 dark:border-gray-800">
+      <button
+        type="button"
+        (click)="onlyUnread.set(false)"
+        class="rounded-full px-4 py-1.5 text-sm font-medium transition"
+        [ngClass]="!onlyUnread()
+          ? 'bg-brand-500 text-white'
+          : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white'"
+      >
+        Toutes
+      </button>
+      <button
+        type="button"
+        (click)="onlyUnread.set(true)"
+        class="rounded-full px-4 py-1.5 text-sm font-medium transition"
+        [ngClass]="onlyUnread()
+          ? 'bg-brand-500 text-white'
+          : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white'"
+      >
+        Non lues
+        @if (unreadCount() > 0) {
+          <span class="ml-1 text-xs opacity-80">({{ unreadCount() }})</span>
+        }
+      </button>
+    </div>
+
+    <app-button variant="outline" size="sm" [disabled]="unreadCount() === 0" (btnClick)="markAllAsRead()">
+      Tout marquer comme lu
+    </app-button>
+  </div>
+
+  <!-- Groupes -->
+  <div class="mt-2 space-y-8">
+    @for (group of groups(); track group.label) {
+      <div>
+        <h4 class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">{{ group.label }}</h4>
+        <div class="space-y-1.5">
+          @for (n of group.items; track n.id) {
+            <a
+              [routerLink]="n.path"
+              (click)="open(n)"
+              class="flex items-start gap-4 rounded-xl px-3 py-3.5 transition"
+              [ngClass]="n.read
+                ? 'hover:bg-gray-50 dark:hover:bg-white/[0.03]'
+                : 'bg-brand-50/60 hover:bg-brand-50 dark:bg-brand-500/[0.06] dark:hover:bg-brand-500/10'"
+            >
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+                [ngClass]="[style(n.category).bg, style(n.category).text]"
+                [innerHTML]="style(n.category).icon | safeHtml"
+              ></div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-start justify-between gap-3">
+                  <p class="font-medium text-gray-800 text-theme-sm dark:text-white/90">{{ n.title }}</p>
+                  <span class="shrink-0 whitespace-nowrap text-theme-xs text-gray-400">{{ formatTime(n.createdAt) }}</span>
+                </div>
+                <p class="mt-0.5 text-theme-sm text-gray-500 dark:text-gray-400">{{ n.message }}</p>
+                <span class="mt-1.5 inline-block text-theme-xs text-gray-400">{{ categoryLabel(n.category) }}</span>
+              </div>
+              @if (!n.read) {
+                <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-500"></span>
+              }
+            </a>
+          }
+        </div>
+      </div>
+    } @empty {
+      <div class="flex flex-col items-center gap-2 py-16 text-center text-gray-400">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M10.75 2.29a1 1 0 00-1.5 0v.55A6.75 6.75 0 003.63 9.5v5.29h-.3a.83.83 0 000 1.67h13.34a.83.83 0 000-1.67h-.3V9.5A6.75 6.75 0 0010.75 2.84v-.55z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="text-sm">Aucune notification pour l'instant.</span>
+      </div>
+    }
+  </div>
+</app-component-card>

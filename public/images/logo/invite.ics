@@ -1,0 +1,90 @@
+BEGIN:VCALENDAR
+METHOD:REQUEST
+PRODID:Microsoft Exchange Server 2010
+VERSION:2.0
+BEGIN:VTIMEZONE
+TZID:Greenwich Standard Time
+BEGIN:STANDARD
+DTSTART:16010101T000000
+TZOFFSETFROM:+0000
+TZOFFSETTO:+0000
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:16010101T000000
+TZOFFSETFROM:+0000
+TZOFFSETTO:+0000
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+ORGANIZER;CN=Yao Yavo Basile NGUESSAN:mailto:basile.nguessan@yayadou.net
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=bakbassjun
+ ior@gmail.com:mailto:bakbassjunior@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=hjoelmanni
+ :mailto:hjoelmanni@gmail.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=jhojeau:ma
+ ilto:jhojeau@yahoo.fr
+DESCRIPTION;LANGUAGE=fr-FR:\n______________________________________________
+ __________________________________\nRéunion Microsoft Teams\nRejoindre : 
+ https://teams.microsoft.com/meet/361132105911422?p=6cm0MybNARtyT2OZHf\nNum
+ éro de réunion : 361 132 105 911 422\nCode secret : v2r62og2\n__________
+ ______________________\nBesoin d'aide ?<https://aka.ms/JoinTeamsMeeting?om
+ kt=fr-FR> | Référence système<https://teams.microsoft.com/l/meetup-join
+ /19%3ameeting_M2RmNTIyNjgtYmQ4MS00NTdjLWJjZGYtN2FhMWNkZTlmOWFl%40thread.v2
+ /0?context=%7b%22Tid%22%3a%22a822e447-447e-4758-b7ff-50f6ef32ac1a%22%2c%22
+ Oid%22%3a%22d1ee104e-f4dd-4b55-8764-07dcf5705112%22%7d>\nPour les organisa
+ teurs : Options de réunion<https://teams.microsoft.com/meetingOptions/?or
+ ganizerId=d1ee104e-f4dd-4b55-8764-07dcf5705112&tenantId=a822e447-447e-4758
+ -b7ff-50f6ef32ac1a&threadId=19_meeting_M2RmNTIyNjgtYmQ4MS00NTdjLWJjZGYtN2F
+ hMWNkZTlmOWFl@thread.v2&messageId=0&language=fr-FR>\n_____________________
+ ___________________________________________________________\n
+RRULE:FREQ=WEEKLY;UNTIL=20270307T100000Z;INTERVAL=1;BYDAY=SU;WKST=MO
+UID:040000008200E00074C5B7101A82E00800000000320301B9DF42DD01000000000000000
+ 010000000FC6D7DECE8B9C941ACB39529484EA0CF
+SUMMARY;LANGUAGE=fr-FR:[MAYTA TECH] Point d'avancement Projet Traçabilité
+  Dossier
+DTSTART;TZID=Greenwich Standard Time:20260913T100000
+DTEND;TZID=Greenwich Standard Time:20260913T103000
+CLASS:PUBLIC
+PRIORITY:5
+DTSTAMP:20260912T175415Z
+TRANSP:OPAQUE
+STATUS:CONFIRMED
+SEQUENCE:1
+LOCATION;LANGUAGE=fr-FR:Réunion Microsoft Teams
+X-MICROSOFT-CDO-APPT-SEQUENCE:1
+X-MICROSOFT-CDO-OWNERAPPTID:2125030802
+X-MICROSOFT-CDO-BUSYSTATUS:TENTATIVE
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+X-MICROSOFT-CDO-IMPORTANCE:1
+X-MICROSOFT-CDO-INSTTYPE:1
+X-MICROSOFT-ONLINEMEETINGINFORMATION:{"OnlineMeetingChannelId":null\,"Onlin
+ eMeetingProvider":3}
+X-MICROSOFT-SKYPETEAMSMEETINGURL:https://teams.microsoft.com/l/meetup-join/
+ 19%3ameeting_M2RmNTIyNjgtYmQ4MS00NTdjLWJjZGYtN2FhMWNkZTlmOWFl%40thread.v2/
+ 0?context=%7b%22Tid%22%3a%22a822e447-447e-4758-b7ff-50f6ef32ac1a%22%2c%22O
+ id%22%3a%22d1ee104e-f4dd-4b55-8764-07dcf5705112%22%7d
+X-MICROSOFT-SCHEDULINGSERVICEUPDATEURL:https://api.scheduler.teams.microsof
+ t.com/teams/a822e447-447e-4758-b7ff-50f6ef32ac1a/d1ee104e-f4dd-4b55-8764-0
+ 7dcf5705112/19_meeting_M2RmNTIyNjgtYmQ4MS00NTdjLWJjZGYtN2FhMWNkZTlmOWFl@th
+ read.v2/0
+X-MICROSOFT-SKYPETEAMSPROPERTIES:{"cid":"19:meeting_M2RmNTIyNjgtYmQ4MS00NTd
+ jLWJjZGYtN2FhMWNkZTlmOWFl@thread.v2"\,"rid":0\,"mid":0\,"uid":null\,"priva
+ te":true\,"type":0}
+X-MICROSOFT-DONOTFORWARDMEETING:FALSE
+X-MICROSOFT-DISALLOW-COUNTER:FALSE
+X-MICROSOFT-REQUESTEDATTENDANCEMODE:DEFAULT
+X-MICROSOFT-ISRESPONSEREQUESTED:TRUE
+X-MICROSOFT-LOCATIONDISPLAYNAME:Réunion Microsoft Teams
+X-MICROSOFT-LOCATIONSOURCE:None
+X-MICROSOFT-LOCATIONS:[{"DisplayName":"Réunion Microsoft Teams"\,"Location
+ Annotation":""\,"LocationUri":""\,"LocationStreet":""\,"LocationCity":""\,
+ "LocationState":""\,"LocationCountry":""\,"LocationPostalCode":""\,"Locati
+ onFullAddress":""}]
+BEGIN:VALARM
+DESCRIPTION:REMINDER
+TRIGGER;RELATED=START:-PT15M
+ACTION:DISPLAY
+END:VALARM
+END:VEVENT
+END:VCALENDAR

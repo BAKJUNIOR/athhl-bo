@@ -1,0 +1,297 @@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+  <app-page-breadcrumb [pageTitle]="isEdit ? 'Modifier le service' : 'Nouveau service'" />
+</div>
+
+<!-- Retour -->
+<a routerLink="/services" class="mb-6 -mt-4 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" class="stroke-current"><path d="M12.7083 5L7.5 10.2083L12.7083 15.4167" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Retour à la liste des services
+</a>
+
+@if (loading()) {
+  <div class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-gray-400 dark:border-gray-800 dark:bg-white/[0.03]">
+    <svg class="h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+    <span class="ml-3 text-sm">Chargement du service...</span>
+  </div>
+}
+
+@if (!loading() && loadError()) {
+  <div class="flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white py-20 text-center dark:border-gray-800 dark:bg-white/[0.03]">
+    <span class="max-w-md text-sm text-gray-500 dark:text-gray-400">{{ loadError() }}</span>
+    <app-button variant="outline" size="sm" routerLink="/services">Retour à la liste</app-button>
+  </div>
+}
+
+@if (!loading() && !loadError()) {
+  <form (ngSubmit)="submitForm()">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+      <!-- Colonne principale -->
+      <div class="space-y-6 lg:col-span-2">
+
+        @if (formError()) {
+          <div class="rounded-lg border border-error-500 bg-error-50 px-4 py-3 text-sm text-error-600 dark:border-error-500/30 dark:bg-error-500/15 dark:text-error-400">
+            {{ formError() }}
+          </div>
+        }
+
+        <app-component-card title="Informations générales" desc="Titre, présentation et identifiant utilisés sur la fiche et la page détail.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Titre — FR <span class="text-error-500">*</span></app-label>
+              <app-input-field
+                [value]="form().titleFr"
+                (valueChange)="updateForm('titleFr', $any($event))"
+                placeholder="Réalisation de projets de construction"
+                [error]="titleFrMissing"
+                [hint]="titleFrMissing ? 'Le titre en français est requis.' : undefined"
+              />
+            </div>
+            <div>
+              <app-label>Titre — EN</app-label>
+              <app-input-field
+                [value]="form().titleEn"
+                (valueChange)="updateForm('titleEn', $any($event))"
+                placeholder="Construction project delivery"
+              />
+            </div>
+            <div>
+              <app-label>Titre court — FR</app-label>
+              <app-input-field
+                [value]="form().shortTitleFr"
+                (valueChange)="updateForm('shortTitleFr', $any($event))"
+                placeholder="Construction"
+              />
+            </div>
+            <div>
+              <app-label>Titre court — EN</app-label>
+              <app-input-field
+                [value]="form().shortTitleEn"
+                (valueChange)="updateForm('shortTitleEn', $any($event))"
+                placeholder="Construction"
+              />
+            </div>
+            <div>
+              <app-label>Adresse (URL)</app-label>
+              <div class="flex h-11 items-center rounded-lg border border-gray-300 bg-gray-50 px-4 text-sm text-gray-500 dark:border-gray-700 dark:bg-white/[0.02] dark:text-gray-400">
+                @if (currentSlug()) {
+                  /services/{{ currentSlug() }}
+                } @else {
+                  <span class="text-gray-400">Générée automatiquement à la création</span>
+                }
+              </div>
+            </div>
+            <div>
+              <app-label>Numéro affiché</app-label>
+              <app-input-field
+                [value]="form().number"
+                (valueChange)="updateForm('number', $any($event))"
+                placeholder="01"
+              />
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Texte de présentation — FR <span class="text-error-500">*</span></app-label>
+              <app-text-area
+                [value]="form().leadFr"
+                (valueChange)="updateForm('leadFr', $any($event))"
+                [rows]="3"
+                [error]="leadFrMissing"
+                [hint]="leadFrMissing ? 'Le texte de présentation en français est requis.' : ''"
+                placeholder="Un texte court affiché en tête de la fiche service."
+              />
+            </div>
+            <div>
+              <app-label>Texte de présentation — EN</app-label>
+              <app-text-area
+                [value]="form().leadEn"
+                (valueChange)="updateForm('leadEn', $any($event))"
+                [rows]="3"
+                placeholder="Short intro text shown at the top of the service page."
+              />
+            </div>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Images" desc="Carte de liste, bannière de la page détail et galerie.">
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div>
+              <app-label>Image de carte</app-label>
+              <div class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-white/[0.02]">
+                @if (form().image) {
+                  <img [src]="form().image" alt="Image de carte" class="h-full w-full object-cover" />
+                } @else {
+                  <span class="text-xs text-gray-400">Aucune image</span>
+                }
+                <label
+                  for="service-image-upload"
+                  class="absolute bottom-2 right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-theme-xs dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
+                >
+                  <input id="service-image-upload" type="file" accept="image/*" class="hidden" (change)="onImageSelected($event, 'image')" />
+                  @if (uploadingField() === 'image') {
+                    <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+                  } @else {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  }
+                </label>
+              </div>
+              <p class="mt-1.5 text-xs text-gray-400">Utilisée dans les listes/cartes de services.</p>
+            </div>
+
+            <div>
+              <app-label>Image de bannière</app-label>
+              <div class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-white/[0.02]">
+                @if (form().heroImage) {
+                  <img [src]="form().heroImage" alt="Image de bannière" class="h-full w-full object-cover" />
+                } @else {
+                  <span class="text-xs text-gray-400">Aucune image</span>
+                }
+                <label
+                  for="service-hero-upload"
+                  class="absolute bottom-2 right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-theme-xs dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
+                >
+                  <input id="service-hero-upload" type="file" accept="image/*" class="hidden" (change)="onImageSelected($event, 'heroImage')" />
+                  @if (uploadingField() === 'heroImage') {
+                    <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+                  } @else {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  }
+                </label>
+              </div>
+              <p class="mt-1.5 text-xs text-gray-400">Grande image en tête de la page détail du service.</p>
+            </div>
+          </div>
+
+          <div>
+            <app-label>Galerie <span class="font-normal text-gray-400">(3 images recommandées)</span></app-label>
+            <div class="flex flex-wrap gap-3">
+              @for (img of form().gallery; track $index) {
+                <div class="group relative h-20 w-28 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                  <img [src]="img" alt="Image de galerie" class="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    (click)="removeGalleryImage($index)"
+                    class="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+                </div>
+              }
+              <label
+                for="service-gallery-upload"
+                class="flex h-20 w-28 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 text-gray-400 hover:border-brand-300 hover:text-brand-500 dark:border-gray-700"
+              >
+                <input id="service-gallery-upload" type="file" accept="image/*" class="hidden" (change)="onGalleryImageSelected($event)" />
+                @if (uploadingField() === 'gallery') {
+                  <svg class="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+                } @else {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M12 5v14M5 12h14" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  <span class="text-[11px]">Ajouter</span>
+                }
+              </label>
+            </div>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Prestations" desc="Ce que comprend le service — 4 recommandées, affichées en grille sur la page détail.">
+          <div class="space-y-4">
+            @for (p of form().prestations; track $index) {
+              <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <span class="text-xs font-medium text-gray-400">Prestation {{ $index + 1 }}</span>
+                  @if (form().prestations.length > 1) {
+                    <button type="button" (click)="removePrestation($index)" class="text-xs font-medium text-error-500 hover:text-error-600">Retirer</button>
+                  }
+                </div>
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <app-input-field [value]="p.titleFr" (valueChange)="updatePrestation($index, 'titleFr', $any($event))" placeholder="Titre — FR" />
+                  <app-input-field [value]="p.titleEn" (valueChange)="updatePrestation($index, 'titleEn', $any($event))" placeholder="Titre — EN" />
+                  <app-text-area [value]="p.descriptionFr" (valueChange)="updatePrestation($index, 'descriptionFr', $any($event))" [rows]="2" placeholder="Description — FR" />
+                  <app-text-area [value]="p.descriptionEn" (valueChange)="updatePrestation($index, 'descriptionEn', $any($event))" [rows]="2" placeholder="Description — EN" />
+                </div>
+              </div>
+            }
+            <button type="button" (click)="addPrestation()" class="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-gray-300 py-3 text-sm font-medium text-gray-500 hover:border-brand-300 hover:text-brand-500 dark:border-gray-700">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+              Ajouter une prestation
+            </button>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Étapes du processus" desc="Le déroulé affiché sur la page détail — 4 recommandées.">
+          <div class="space-y-4">
+            @for (step of form().process; track $index) {
+              <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
+                <div class="mb-3 flex items-center justify-between">
+                  <span class="text-xs font-medium text-gray-400">Étape {{ step.number }}</span>
+                  @if (form().process.length > 1) {
+                    <button type="button" (click)="removeStep($index)" class="text-xs font-medium text-error-500 hover:text-error-600">Retirer</button>
+                  }
+                </div>
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <app-input-field [value]="step.titleFr" (valueChange)="updateStep($index, 'titleFr', $any($event))" placeholder="Titre — FR" />
+                  <app-input-field [value]="step.titleEn" (valueChange)="updateStep($index, 'titleEn', $any($event))" placeholder="Titre — EN" />
+                  <app-text-area [value]="step.descriptionFr" (valueChange)="updateStep($index, 'descriptionFr', $any($event))" [rows]="2" placeholder="Description — FR" />
+                  <app-text-area [value]="step.descriptionEn" (valueChange)="updateStep($index, 'descriptionEn', $any($event))" [rows]="2" placeholder="Description — EN" />
+                </div>
+              </div>
+            }
+            <button type="button" (click)="addStep()" class="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-gray-300 py-3 text-sm font-medium text-gray-500 hover:border-brand-300 hover:text-brand-500 dark:border-gray-700">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+              Ajouter une étape
+            </button>
+          </div>
+        </app-component-card>
+      </div>
+
+      <!-- Colonne latérale : statut, actions, aperçu -->
+      <div class="space-y-6 lg:sticky lg:top-6 lg:self-start">
+        <app-component-card title="Publication">
+          <div class="flex items-center justify-between">
+            <app-switch
+              label="Publié"
+              [defaultChecked]="form().status === 'published'"
+              (valueChange)="onStatusChange($event)"
+            />
+            <app-badge size="sm" [color]="form().status === 'published' ? 'success' : 'warning'">
+              {{ statusLabel(form().status) }}
+            </app-badge>
+          </div>
+          <p class="mt-3 text-xs text-gray-400">
+            Un service en brouillon reste modifiable ici mais n'apparaît pas sur le site vitrine.
+          </p>
+
+          <div class="mt-5 flex gap-3 border-t border-gray-100 pt-5 dark:border-white/[0.05]">
+            <app-button class="flex-1" className="w-full" variant="outline" size="sm" [disabled]="saving()" (btnClick)="cancel()">Annuler</app-button>
+            <app-button class="flex-1" className="w-full" size="sm" [disabled]="saving()" (btnClick)="submitForm()">
+              {{ saving() ? 'Enregistrement...' : (isEdit ? 'Enregistrer' : 'Créer le service') }}
+            </app-button>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Aperçu" desc="Ce que verra un visiteur du site vitrine.">
+          <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
+            <div class="flex aspect-video w-full items-center justify-center bg-gray-100 dark:bg-white/[0.03]">
+              @if (form().image) {
+                <img [src]="form().image" alt="" class="h-full w-full object-cover" />
+              } @else {
+                <span class="text-xs text-gray-400">Aucune image</span>
+              }
+            </div>
+            <div class="p-4">
+              <span class="text-xs font-medium text-purple-500">{{ form().number || '—' }}</span>
+              <h5 class="mt-1 font-medium text-gray-800 dark:text-white/90">
+                {{ form().titleFr || 'Titre du service' }}
+              </h5>
+              <p class="mt-1 line-clamp-3 text-sm text-gray-500 dark:text-gray-400">
+                {{ form().leadFr || 'Le texte de présentation apparaîtra ici.' }}
+              </p>
+            </div>
+          </div>
+        </app-component-card>
+      </div>
+    </div>
+  </form>
+}

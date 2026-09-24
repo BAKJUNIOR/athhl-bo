@@ -1,0 +1,12 @@
+services:
+  athl-bo:
+    image: bakjunior58/athl-bo:1.0.0
+    container_name: athl-bo
+    restart: always
+    networks:
+      - applications-network
+
+networks:
+  applications-network:
+    external: true
+    name: applications-network

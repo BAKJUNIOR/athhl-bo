@@ -1,0 +1,260 @@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+  <app-page-breadcrumb [pageTitle]="isEdit ? 'Modifier la popup' : 'Nouvelle popup'" />
+</div>
+
+<!-- Retour -->
+<a routerLink="/popups" class="mb-6 -mt-4 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" class="stroke-current"><path d="M12.7083 5L7.5 10.2083L12.7083 15.4167" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Retour à la liste des popups
+</a>
+
+@if (loading()) {
+  <div class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-gray-400 dark:border-gray-800 dark:bg-white/[0.03]">
+    <svg class="h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+    <span class="ml-3 text-sm">Chargement de la popup...</span>
+  </div>
+}
+
+@if (!loading() && loadError()) {
+  <div class="flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white py-20 text-center dark:border-gray-800 dark:bg-white/[0.03]">
+    <span class="max-w-md text-sm text-gray-500 dark:text-gray-400">{{ loadError() }}</span>
+    <app-button variant="outline" size="sm" routerLink="/popups">Retour à la liste</app-button>
+  </div>
+}
+
+@if (!loading() && !loadError()) {
+  <form (ngSubmit)="submitForm()">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+      <!-- Colonne principale -->
+      <div class="space-y-6 lg:col-span-2">
+
+        @if (formError()) {
+          <div class="rounded-lg border border-error-500 bg-error-50 px-4 py-3 text-sm text-error-600 dark:border-error-500/30 dark:bg-error-500/15 dark:text-error-400">
+            {{ formError() }}
+          </div>
+        }
+
+        <app-component-card title="Ciblage" desc="Page affichée, type de popup et fréquence d'apparition.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Page cible <span class="text-error-500">*</span></app-label>
+              <app-select
+                [options]="pageOptions"
+                [value]="form().page || '__home__'"
+                (valueChange)="onPageChange($any($event))"
+              />
+            </div>
+            <div>
+              <app-label>Type de popup <span class="text-error-500">*</span></app-label>
+              <app-select
+                [options]="typeOptions"
+                [value]="form().type"
+                (valueChange)="updateForm('type', $any($event))"
+              />
+            </div>
+
+            @if (form().type === 'image_text') {
+              <div>
+                <app-label>Disposition</app-label>
+                <app-select
+                  [options]="layoutOptions"
+                  [value]="form().layout"
+                  (valueChange)="updateForm('layout', $any($event))"
+                />
+              </div>
+            }
+
+            <div>
+              <app-label>Fréquence d'affichage</app-label>
+              <app-select
+                [options]="frequencyOptions"
+                [value]="form().frequency"
+                (valueChange)="updateForm('frequency', $any($event))"
+              />
+            </div>
+            <div>
+              <app-label>Délai avant apparition (secondes)</app-label>
+              <app-input-field
+                type="number"
+                [value]="delaySeconds"
+                (valueChange)="onDelaySecondsChange($any($event))"
+                placeholder="1.2"
+              />
+            </div>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Contenu" desc="Texte et visuel affichés dans la popup.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Surtitre <span class="font-normal text-gray-400">(optionnel)</span></app-label>
+              <app-input-field
+                [value]="form().eyebrow || ''"
+                (valueChange)="updateForm('eyebrow', $any($event))"
+                placeholder="Nouveau chez ATHL"
+              />
+            </div>
+            <div>
+              <app-label>Titre <span class="text-error-500">*</span></app-label>
+              <app-input-field
+                [value]="form().title"
+                (valueChange)="updateForm('title', $any($event))"
+                placeholder="Soyez informé de nos nouveaux services"
+                [error]="titleMissing"
+                [hint]="titleMissing ? 'Le titre est requis.' : undefined"
+              />
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <app-label>Texte <span class="font-normal text-gray-400">(optionnel)</span></app-label>
+            <app-text-area
+              [value]="form().text || ''"
+              (valueChange)="updateForm('text', $any($event))"
+              [rows]="3"
+              placeholder="Inscrivez-vous pour recevoir nos actualités..."
+            />
+          </div>
+
+          <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div>
+              <app-label>Image</app-label>
+              <div class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-white/[0.02]">
+                @if (form().image) {
+                  <img [src]="form().image" alt="Image de la popup" class="h-full w-full object-cover" />
+                } @else {
+                  <span class="text-xs text-gray-400">Aucune image</span>
+                }
+                <label
+                  for="popup-image-upload"
+                  class="absolute bottom-2 right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-theme-xs dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
+                >
+                  <input id="popup-image-upload" type="file" accept="image/*" class="hidden" (change)="onImageSelected($event)" />
+                  @if (uploadingField() === 'image') {
+                    <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+                  } @else {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  }
+                </label>
+              </div>
+              <p class="mt-1.5 text-xs text-gray-400">
+                @if (form().type === 'video') { Utilisée comme aperçu avant lecture. } @else { Visuel principal de la popup. }
+              </p>
+            </div>
+
+            @if (form().type === 'video') {
+              <div>
+                <app-label>Vidéo</app-label>
+                <div class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-white/[0.02]">
+                  @if (form().video) {
+                    <video [src]="form().video" controls class="h-full w-full object-cover"></video>
+                  } @else {
+                    <span class="text-xs text-gray-400">Aucune vidéo</span>
+                  }
+                  <label
+                    for="popup-video-upload"
+                    class="absolute bottom-2 right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-theme-xs dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
+                  >
+                    <input id="popup-video-upload" type="file" accept="video/*" class="hidden" (change)="onVideoSelected($event)" />
+                    @if (uploadingField() === 'video') {
+                      <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+                    } @else {
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    }
+                  </label>
+                </div>
+                <p class="mt-1.5 text-xs text-gray-400">Vidéo lue dans la popup.</p>
+              </div>
+            }
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Bouton d'action" desc="Optionnel — sans URL, le bouton ouvre le formulaire de devis du site.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Libellé du bouton</app-label>
+              <app-input-field
+                [value]="form().ctaLabel || ''"
+                (valueChange)="updateForm('ctaLabel', $any($event))"
+                placeholder="S'inscrire, Demander un devis..."
+              />
+            </div>
+            <div>
+              <app-label>URL du bouton <span class="font-normal text-gray-400">(optionnel)</span></app-label>
+              <app-input-field
+                [value]="form().ctaUrl || ''"
+                (valueChange)="updateForm('ctaUrl', $any($event))"
+                placeholder="/projets"
+              />
+            </div>
+          </div>
+
+          @if (form().type === 'image_text') {
+            <div class="mt-5 flex items-center justify-between border-t border-gray-100 pt-5 dark:border-white/[0.05]">
+              <app-switch
+                label="Collecter l'adresse e-mail (newsletter)"
+                [defaultChecked]="form().collectEmail"
+                (valueChange)="onCollectEmailChange($event)"
+              />
+            </div>
+          }
+        </app-component-card>
+      </div>
+
+      <!-- Colonne latérale : statut, actions, aperçu -->
+      <div class="space-y-6 lg:sticky lg:top-6 lg:self-start">
+        <app-component-card title="Activation">
+          <div class="flex items-center justify-between">
+            <app-switch
+              label="Active"
+              [defaultChecked]="form().active"
+              (valueChange)="onActiveChange($event)"
+            />
+            <app-badge size="sm" [color]="form().active ? 'success' : 'light'">
+              {{ form().active ? 'Active' : 'Inactive' }}
+            </app-badge>
+          </div>
+          <p class="mt-3 text-xs text-gray-400">
+            Une seule popup active à la fois par page : activer celle-ci désactivera automatiquement toute autre popup déjà active sur la même page.
+          </p>
+
+          <div class="mt-5 flex gap-3 border-t border-gray-100 pt-5 dark:border-white/[0.05]">
+            <app-button class="flex-1" className="w-full" variant="outline" size="sm" [disabled]="saving()" (btnClick)="cancel()">Annuler</app-button>
+            <app-button class="flex-1" className="w-full" size="sm" [disabled]="saving()" (btnClick)="submitForm()">
+              {{ saving() ? 'Enregistrement...' : (isEdit ? 'Enregistrer' : 'Créer la popup') }}
+            </app-button>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Aperçu" desc="Ce que verra un visiteur du site vitrine.">
+          <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
+            <div class="flex aspect-video w-full items-center justify-center bg-gray-100 dark:bg-white/[0.03]">
+              @if (form().image) {
+                <img [src]="form().image" alt="" class="h-full w-full object-cover" />
+              } @else {
+                <span class="text-xs text-gray-400">Aucune image</span>
+              }
+            </div>
+            <div class="p-4">
+              @if (form().eyebrow) {
+                <span class="text-xs font-medium uppercase tracking-wide text-brand-500">{{ form().eyebrow }}</span>
+              }
+              <h5 class="mt-1 font-medium text-gray-800 dark:text-white/90">
+                {{ form().title || 'Titre de la popup' }}
+              </h5>
+              @if (form().text) {
+                <p class="mt-1 line-clamp-3 text-sm text-gray-500 dark:text-gray-400">{{ form().text }}</p>
+              }
+              @if (form().ctaLabel) {
+                <span class="mt-3 inline-flex rounded-lg bg-gray-800 px-3 py-1.5 text-xs font-medium text-white dark:bg-white/10">
+                  {{ form().ctaLabel }}
+                </span>
+              }
+            </div>
+          </div>
+        </app-component-card>
+      </div>
+    </div>
+  </form>
+}
