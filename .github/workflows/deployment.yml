@@ -2,7 +2,7 @@ name: deploy athl bo
 on:
   push:
     branches:
-      - develop   # ne se déclenche QUE quand on push sur develop
+      - develop # ne se déclenche QUE quand on push sur develop
 env:
   IMAGE: athl-bo
   VERSION: 1.0.0
