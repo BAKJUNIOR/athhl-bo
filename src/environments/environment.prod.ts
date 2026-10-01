@@ -56,12 +56,6 @@ export const environment = {
       update: (memberId: number | string) => `api/v1/team/${memberId}`,
       byId: (memberId: number | string) => `api/v1/team/${memberId}`,
     },
-    testimonials: {
-      list: 'api/v1/testimonials',
-      create: 'api/v1/testimonials',
-      update: (testimonialId: number | string) => `api/v1/testimonials/${testimonialId}`,
-      byId: (testimonialId: number | string) => `api/v1/testimonials/${testimonialId}`,
-    },
     projects: {
       list: 'api/v1/projects',
       create: 'api/v1/projects',

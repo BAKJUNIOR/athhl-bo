@@ -87,7 +87,14 @@ export class TeamListComponent {
   openEdit(member: TeamMember): void {
     const { id, updatedAt, ...rest } = member;
     this.editingId.set(id);
-    this.form.set({ ...rest, bioFr: rest.bioFr ?? '', bioEn: rest.bioEn ?? '' });
+    this.form.set({
+      ...rest,
+      bioFr: rest.bioFr ?? '',
+      bioEn: rest.bioEn ?? '',
+      quoteFr: rest.quoteFr ?? '',
+      quoteEn: rest.quoteEn ?? '',
+      initials: rest.initials ?? '',
+    });
     this.submitAttempted.set(false);
     this.formError.set(null);
     this.formOpen.set(true);

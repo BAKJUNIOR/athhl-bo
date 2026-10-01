@@ -168,6 +168,36 @@
       </div>
     </div>
 
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <app-label>Citation — FR</app-label>
+        <app-text-area
+          [value]="form().quoteFr"
+          (valueChange)="updateForm('quoteFr', $any($event))"
+          [rows]="3"
+          placeholder="Si renseignée, ce membre apparaît aussi dans le carrousel de témoignages de l'accueil."
+        />
+      </div>
+      <div>
+        <app-label>Citation — EN</app-label>
+        <app-text-area
+          [value]="form().quoteEn"
+          (valueChange)="updateForm('quoteEn', $any($event))"
+          [rows]="3"
+          placeholder="If set, this member also appears in the homepage testimonials carousel."
+        />
+      </div>
+    </div>
+
+    <div class="w-32">
+      <app-label>Initiales (badge témoignage)</app-label>
+      <app-input-field
+        [value]="form().initials"
+        (valueChange)="updateForm('initials', $any($event))"
+        placeholder="EN"
+      />
+    </div>
+
     <div class="w-32">
       <app-label>Ordre d'affichage</app-label>
       <app-input-field

@@ -13,7 +13,6 @@ import { JobFormComponent } from './domains/jobs/presentation/pages/job-form/job
 import { QuotesListComponent } from './domains/quotes/presentation/pages/quotes-list/quotes-list.component';
 import { ApplicationsListComponent } from './domains/applications/presentation/pages/applications-list/applications-list.component';
 import { TeamListComponent } from './domains/team/presentation/pages/team-list/team-list.component';
-import { TestimonialListComponent } from './domains/testimonials/presentation/pages/testimonial-list/testimonial-list.component';
 import { ProjectsListComponent } from './domains/projects/presentation/pages/projects-list/projects-list.component';
 import { SiteSettingsPageComponent } from './domains/site-settings/presentation/pages/site-settings-page/site-settings-page.component';
 import { AboutPagePageComponent } from './domains/about-page/presentation/pages/about-page-page/about-page-page.component';
@@ -99,12 +98,6 @@ export const routes: Routes = [
         component:TeamListComponent,
         canActivate:[adminGuard],
         title:'Équipe | ATHL-HABITAT&LOGISTIC'
-      },
-      {
-        path:'testimonials',
-        component:TestimonialListComponent,
-        canActivate:[adminGuard],
-        title:'Témoignages | ATHL-HABITAT&LOGISTIC'
       },
       {
         path:'projects',
