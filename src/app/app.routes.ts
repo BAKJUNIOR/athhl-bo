@@ -15,6 +15,7 @@ import { ApplicationsListComponent } from './domains/applications/presentation/p
 import { TeamListComponent } from './domains/team/presentation/pages/team-list/team-list.component';
 import { ProjectsListComponent } from './domains/projects/presentation/pages/projects-list/projects-list.component';
 import { SiteSettingsPageComponent } from './domains/site-settings/presentation/pages/site-settings-page/site-settings-page.component';
+import { AboutPagePageComponent } from './domains/about-page/presentation/pages/about-page-page/about-page-page.component';
 import { PopupsListComponent } from './domains/popups/presentation/pages/popups-list/popups-list.component';
 import { PopupFormComponent } from './domains/popups/presentation/pages/popup-form/popup-form.component';
 import { NotificationsPageComponent } from './domains/notifications/presentation/pages/notifications-page/notifications-page.component';
@@ -109,6 +110,12 @@ export const routes: Routes = [
         component:SiteSettingsPageComponent,
         canActivate:[adminGuard],
         title:'Paramètres du site | ATHL-HABITAT&LOGISTIC'
+      },
+      {
+        path:'about-page',
+        component:AboutPagePageComponent,
+        canActivate:[adminGuard],
+        title:'Page À propos | ATHL-HABITAT&LOGISTIC'
       },
       {
         path:'popups',

@@ -1,10 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, map, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-
-const UPLOAD_URL = 'https://api.cloudinary.com/v1_1';
-
-const env = environment as { cloudinary?: { cloudName?: string; uploadPreset?: string } };
+import { extractApiErrorMessage } from '../utils/api-error.util';
 
 export interface CloudinaryUploadResponse {
   secure_url: string;
@@ -12,84 +10,38 @@ export interface CloudinaryUploadResponse {
   [key: string]: unknown;
 }
 
+/**
+ * Upload de fichiers (images, vidéos, PDF) pour le BO. Passe par notre backend
+ * (POST /api/v1/uploads, réservé ADMIN) plutôt que par un appel direct à Cloudinary :
+ * l'API_KEY/API_SECRET Cloudinary ne doivent jamais atteindre le navigateur — c'est le
+ * backend qui les détient et fait l'upload réel (voir CloudinaryConfig côté Athl_back).
+ */
 @Injectable({ providedIn: 'root' })
 export class CloudinaryUploadService {
-  private readonly cloudName = env.cloudinary?.cloudName;
-  private readonly uploadPreset = env.cloudinary?.uploadPreset;
+  private readonly http = inject(HttpClient);
+  private readonly base = environment.apiUrl;
 
-  /**
-   * Envoie un fichier vers Cloudinary et retourne l'URL sécurisée.
-   * Détecte automatiquement le type de ressource (image, video, raw pour PDF).
-   */
   upload(file: File, folder?: string): Observable<CloudinaryUploadResponse> {
-    let resourceType: 'image' | 'video' | 'raw' = 'image';
-
-    if (file.type === 'application/pdf') {
-      resourceType = 'raw';
-    } else if (file.type.startsWith('video/')) {
-      resourceType = 'video';
-    } else if (file.type.startsWith('image/')) {
-      resourceType = 'image';
-    } else {
-      resourceType = 'raw';
-    }
-
-    return this.uploadResource(file, resourceType, folder);
+    return this.uploadResource(file, folder);
   }
 
-  /**
-   * Envoie une vidéo vers Cloudinary et retourne l'URL sécurisée.
-   */
   uploadVideo(file: File, folder?: string): Observable<CloudinaryUploadResponse> {
-    return this.uploadResource(file, 'video', folder);
+    return this.uploadResource(file, folder);
   }
 
-  private uploadResource(
-    file: File,
-    resourceType: 'image' | 'video' | 'raw',
-    folder?: string
-  ): Observable<CloudinaryUploadResponse> {
-    return new Observable((observer) => {
-      if (!this.cloudName || !this.uploadPreset) {
-        observer.error(new Error('Cloudinary non configuré (cloudName, uploadPreset)'));
-        return;
-      }
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', this.uploadPreset);
-      if (folder) formData.append('folder', folder);
+  private uploadResource(file: File, folder?: string): Observable<CloudinaryUploadResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (folder) formData.append('folder', folder);
 
-      const url = `${UPLOAD_URL}/${this.cloudName}/${resourceType}/upload`;
-
-      fetch(url, {
-        method: 'POST',
-        body: formData,
-      })
-        .then(async (res) => {
-          const data = (await res.json()) as CloudinaryUploadResponse & { error?: { message?: string } };
-          if (data.error) {
-            let msg = data.error.message ?? 'Erreur Cloudinary';
-            if (msg.toLowerCase().includes('upload preset')) {
-              msg += ' — Créez le preset "' + this.uploadPreset + '" dans Cloudinary : Settings > Upload > Add upload preset (mode Unsigned)';
-            }
-            observer.error(new Error(msg));
-            return;
-          }
-          if (data.secure_url) {
-            observer.next({
-              ...data,
-              secure_url: CloudinaryUploadService.normalizeDeliveryUrl(data.secure_url),
-            });
-            observer.complete();
-          } else {
-            observer.error(new Error('Réponse Cloudinary invalide'));
-          }
-        })
-        .catch((err) => {
-          const msg = err?.message ?? (err?.toString?.() || 'Erreur réseau ou CORS');
-          observer.error(new Error(msg));
-        });
-    });
+    return this.http.post<CloudinaryUploadResponse>(`${this.base}/${environment.endpoints.uploads.create}`, formData).pipe(
+      map((res) => ({ ...res, secure_url: CloudinaryUploadService.normalizeDeliveryUrl(res.secure_url) })),
+      // Les composants consommateurs attendent un Error classique (err?.message) — pattern
+      // hérité de l'ancien appel fetch() direct à Cloudinary, conservé pour ne pas les retoucher tous.
+      catchError((err: HttpErrorResponse) =>
+        throwError(() => new Error(extractApiErrorMessage(err, "Erreur lors de l'envoi du fichier."))),
+      ),
+    );
   }
 
   /**

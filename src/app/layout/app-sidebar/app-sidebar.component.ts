@@ -89,6 +89,11 @@ export class AppSidebarComponent {
           path: '/site-settings',
           icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 20V10M12 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
         },
+        {
+          name: 'Page À propos',
+          path: '/about-page',
+          icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v.5M12 11v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+        },
       ],
     },
   ];

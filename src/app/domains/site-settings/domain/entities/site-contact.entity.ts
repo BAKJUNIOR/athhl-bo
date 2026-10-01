@@ -1,8 +1,8 @@
 /**
- * Coordonnées et réseaux sociaux affichés sur le site vitrine (footer + page Contact),
- * aujourd'hui codés en dur à 2 endroits dans le front (footer.component.ts et
- * contact.component.html) : 3 numéros de téléphone, l'adresse et les liens sociaux.
- * Jeu de données fixe (1 seul enregistrement) : un seul GET, un seul PUT global.
+ * Coordonnées et réseaux sociaux affichés sur le site vitrine (footer + page Contact) :
+ * 3 numéros de téléphone, l'adresse, l'email de contact, le lieu de la carte Google Maps,
+ * les liens sociaux et le petit texte "À propos d'ATHL" du footer. Jeu de données fixe
+ * (1 seul enregistrement) : un seul GET, un seul PUT global.
  */
 export interface SiteContact {
   phone1: string;
@@ -13,6 +13,11 @@ export interface SiteContact {
   youtubeUrl: string;
   instagramUrl: string;
   linkedinUrl: string;
+  tiktokUrl: string;
+  contactEmail: string;
+  footerAboutFr: string;
+  footerAboutEn: string;
+  mapLocation: string;
 }
 
 export const SITE_CONTACT_DEFAULTS: SiteContact = {
@@ -24,4 +29,9 @@ export const SITE_CONTACT_DEFAULTS: SiteContact = {
   youtubeUrl: '',
   instagramUrl: '',
   linkedinUrl: '',
+  tiktokUrl: '',
+  contactEmail: '',
+  footerAboutFr: '',
+  footerAboutEn: '',
+  mapLocation: '',
 };

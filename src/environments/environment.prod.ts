@@ -2,10 +2,6 @@
 export const environment = {
   production: true,
   apiUrl: 'https://api.athl.athl-logistique.com',
-  cloudinary: {
-    cloudName: 'drfq0bt4z',
-    uploadPreset: 'xbanking'
-  },
   endpoints: {
     auth: {
       authenticate: 'api/v1/authenticate',
@@ -68,13 +64,24 @@ export const environment = {
       unpublish: (projectId: number | string) => `api/v1/projects/${projectId}/unpublish`,
       byId: (projectId: number | string) => `api/v1/projects/${projectId}`,
     },
-    homeStats: {
-      list: 'api/v1/home-stats',
-      update: 'api/v1/home-stats',
-    },
     siteContact: {
       get: 'api/v1/site-settings/contact',
       update: 'api/v1/site-settings/contact',
+    },
+    aboutPage: {
+      get: 'api/v1/about-page',
+      update: 'api/v1/about-page',
+    },
+    partners: {
+      get: 'api/v1/partners',
+      update: 'api/v1/partners',
+    },
+    contactPage: {
+      get: 'api/v1/contact-page',
+      update: 'api/v1/contact-page',
+    },
+    uploads: {
+      create: 'api/v1/uploads',
     },
     popups: {
       list: 'api/v1/popups',

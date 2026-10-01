@@ -2,22 +2,22 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { SiteContact } from '../../domain/entities/site-contact.entity';
+import { ContactPageContent } from '../../domain/entities/contact-page.entity';
 
 /**
  * Jeu de données fixe (1 enregistrement) : un seul GET public, un seul PUT réservé ADMIN.
  */
 @Injectable({ providedIn: 'root' })
-export class SiteContactApi {
+export class ContactPageApi {
   private readonly http = inject(HttpClient);
   private readonly base = environment.apiUrl;
-  private readonly ep = environment.endpoints.siteContact;
+  private readonly ep = environment.endpoints.contactPage;
 
-  get(): Observable<SiteContact> {
-    return this.http.get<SiteContact>(`${this.base}/${this.ep.get}`);
+  get(): Observable<ContactPageContent> {
+    return this.http.get<ContactPageContent>(`${this.base}/${this.ep.get}`);
   }
 
-  update(contact: SiteContact): Observable<SiteContact> {
-    return this.http.put<SiteContact>(`${this.base}/${this.ep.update}`, contact);
+  update(content: ContactPageContent): Observable<ContactPageContent> {
+    return this.http.put<ContactPageContent>(`${this.base}/${this.ep.update}`, content);
   }
 }
