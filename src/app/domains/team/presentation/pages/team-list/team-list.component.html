@@ -81,7 +81,7 @@
 </app-component-card>
 
 <!-- Modale : nouveau / modifier un membre -->
-<app-modal [isOpen]="formOpen()" (close)="closeForm()" className="max-w-3xl w-full m-4 p-8 max-h-[90vh] overflow-y-auto">
+<app-modal [isOpen]="formOpen()" (close)="closeForm()" className="max-w-5xl w-full m-4 p-8 max-h-[90vh] overflow-y-auto">
   <h3 class="mb-1 text-lg font-semibold text-gray-800 dark:text-white/90">
     {{ editingId() ? 'Modifier le membre' : 'Nouveau membre' }}
   </h3>
