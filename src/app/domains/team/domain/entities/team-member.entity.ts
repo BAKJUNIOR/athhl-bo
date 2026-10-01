@@ -9,6 +9,8 @@ export interface TeamMember {
   roleFr: string;
   roleEn: string;
   photo: string;
+  bioFr: string;
+  bioEn: string;
   sortOrder: number;
   updatedAt: string;
 }
@@ -16,5 +18,5 @@ export interface TeamMember {
 export type TeamMemberUpsertRequest = Omit<TeamMember, 'id' | 'updatedAt'>;
 
 export function emptyTeamMemberForm(nextSortOrder: number): TeamMemberUpsertRequest {
-  return { name: '', roleFr: '', roleEn: '', photo: '', sortOrder: nextSortOrder };
+  return { name: '', roleFr: '', roleEn: '', photo: '', bioFr: '', bioEn: '', sortOrder: nextSortOrder };
 }
