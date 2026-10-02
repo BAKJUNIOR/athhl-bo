@@ -1,8 +1,9 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { NgApexchartsModule, ApexNonAxisChartSeries, ApexChart, ApexPlotOptions, ApexDataLabels, ApexStroke, ApexLegend, ApexFill, ApexTooltip, ApexStates } from 'ng-apexcharts';
 import { DropdownComponent } from '../../../../../../shared/ui/dropdown/dropdown.component';
 import { DropdownItemComponent } from '../../../../../../shared/ui/dropdown/dropdown-item/dropdown-item.component';
+import { DashboardStatsApi } from '../../../../infrastructure/api/dashboard-stats.api';
 
 interface Slice {
   label: string;
@@ -20,22 +21,36 @@ interface Slice {
 ],
   templateUrl: './monthly-sales-chart.component.html'
 })
-export class MonthlySalesChartComponent {
-  // Chiffres d'exemple en attendant un endpoint d'agrégation côté backend
-  // (répartition des demandes reçues ce mois-ci entre devis et candidatures).
-  quotesThisMonth = 24;
-  applicationsThisMonth = 17;
+export class MonthlySalesChartComponent implements OnInit {
+  private readonly dashboardStatsApi = inject(DashboardStatsApi);
 
-  readonly slices: Slice[] = [
-    { label: 'Demandes de devis', value: this.quotesThisMonth, color: '#f97316' },
-    { label: 'Candidatures', value: this.applicationsThisMonth, color: '#5d4392' },
-  ];
+  // Répartition des demandes reçues ce mois-ci entre devis et candidatures (voir
+  // DashboardStatsApi) — mis à jour dans ngOnInit, les valeurs de départ sont juste le repli
+  // avant que l'appel réseau aboutisse. Signaux, pas de simples champs : l'app tourne sans
+  // zone.js (voir package.json), une mutation de champ brut dans un callback RxJS ne déclenche
+  // pas de rafraîchissement de la vue (ni de la vue, ni de l'input [series] du <apx-chart>).
+  slices = signal<Slice[]>([
+    { label: 'Demandes de devis', value: 0, color: '#f97316' },
+    { label: 'Candidatures', value: 0, color: '#5d4392' },
+  ]);
 
-  readonly total = this.slices.reduce((sum, s) => sum + s.value, 0);
+  total = signal(0);
 
-  public series: ApexNonAxisChartSeries = this.slices.map((s) => s.value);
-  public labels: string[] = this.slices.map((s) => s.label);
-  public colors: string[] = this.slices.map((s) => s.color);
+  public series = signal<ApexNonAxisChartSeries>([0, 0]);
+  public labels: string[] = ['Demandes de devis', 'Candidatures'];
+  public colors: string[] = ['#f97316', '#5d4392'];
+
+  ngOnInit(): void {
+    this.dashboardStatsApi.getSummary().subscribe((summary) => {
+      const slices: Slice[] = [
+        { label: 'Demandes de devis', value: summary.quotesThisMonth, color: '#f97316' },
+        { label: 'Candidatures', value: summary.applicationsThisMonth, color: '#5d4392' },
+      ];
+      this.slices.set(slices);
+      this.total.set(slices.reduce((sum, s) => sum + s.value, 0));
+      this.series.set(slices.map((s) => s.value));
+    });
+  }
 
   public chart: ApexChart = {
     fontFamily: 'Outfit, sans-serif',
@@ -72,7 +87,7 @@ export class MonthlySalesChartComponent {
             fontSize: '15px',
             fontWeight: 500,
             color: '#98A2B3',
-            formatter: () => `${this.total}`,
+            formatter: () => `${this.total()}`,
           },
         },
       },
@@ -104,7 +119,8 @@ export class MonthlySalesChartComponent {
   isOpen = false;
 
   percentage(value: number): number {
-    return this.total ? Math.round((value / this.total) * 100) : 0;
+    const total = this.total();
+    return total ? Math.round((value / total) * 100) : 0;
   }
 
   toggleDropdown() {

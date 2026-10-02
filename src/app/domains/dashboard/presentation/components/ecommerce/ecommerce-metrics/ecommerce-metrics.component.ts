@@ -1,20 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { BadgeComponent } from '../../../../../../shared/ui/badge/badge.component';
 import { SafeHtmlPipe } from '../../../../../../shared/pipe/safe-html.pipe';
+import { DashboardStatsApi } from '../../../../infrastructure/api/dashboard-stats.api';
 
 @Component({
   selector: 'app-ecommerce-metrics',
   imports: [BadgeComponent,SafeHtmlPipe],
   templateUrl: './ecommerce-metrics.component.html'
 })
-export class EcommerceMetricsComponent {
+export class EcommerceMetricsComponent implements OnInit {
+  private readonly dashboardStatsApi = inject(DashboardStatsApi);
 
-  // Chiffres d'exemple en attendant un endpoint d'agrégation côté backend
-  // (voir domains/quotes et domains/applications — mêmes sources que les boîtes de réception).
-  quotesThisMonth = 24;
-  quotesTrend = 12.4;
-  applicationsThisMonth = 17;
-  applicationsTrend = -6.2;
+  // Demandes de devis/candidatures reçues ce mois-ci (voir domains/quotes et
+  // domains/applications — même source de données que les boîtes de réception).
+  // Signaux, pas de simples champs : l'app tourne sans zone.js (voir package.json), une
+  // mutation de champ brut dans un callback RxJS ne déclenche pas de rafraîchissement de la vue.
+  quotesThisMonth = signal(0);
+  quotesTrend = signal(0);
+  applicationsThisMonth = signal(0);
+  applicationsTrend = signal(0);
+
+  ngOnInit(): void {
+    this.dashboardStatsApi.getSummary().subscribe((summary) => {
+      this.quotesThisMonth.set(summary.quotesThisMonth);
+      this.quotesTrend.set(summary.quotesTrendPercent ?? 0);
+      this.applicationsThisMonth.set(summary.applicationsThisMonth);
+      this.applicationsTrend.set(summary.applicationsTrendPercent ?? 0);
+    });
+  }
 
   public icons = {
     mailIcon:`<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-gray-800 size-6 dark:text-white/90"><path d="M4 4h16a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 6l9 7 9-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,

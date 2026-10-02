@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-        @for (kpi of kpis; track kpi.name) {
+        @for (kpi of kpis(); track kpi.name) {
         <tr [routerLink]="kpi.path" class="cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.02]">
           <td class="py-2 text-start">
             <div class="flex items-center gap-2.5">

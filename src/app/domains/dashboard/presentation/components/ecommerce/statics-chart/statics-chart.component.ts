@@ -1,5 +1,5 @@
 
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
 import flatpickr from 'flatpickr';
 import { Instance } from 'flatpickr/dist/types/instance';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -18,14 +18,26 @@ import {
   ApexYAxis,
 } from 'ng-apexcharts';
 import { ChartTabComponent } from '../../common/chart-tab/chart-tab.component';
+import { DashboardStatsApi } from '../../../../infrastructure/api/dashboard-stats.api';
 
 @Component({
   selector: 'app-statics-chart',
   imports: [NgApexchartsModule, ChartTabComponent],
   templateUrl: './statics-chart.component.html',
 })
-export class StatisticsChartComponent implements AfterViewInit {
+export class StatisticsChartComponent implements AfterViewInit, OnInit {
+  private readonly dashboardStatsApi = inject(DashboardStatsApi);
+
   @ViewChild('datepicker') datepicker!: ElementRef<HTMLInputElement>;
+
+  ngOnInit(): void {
+    this.dashboardStatsApi.getSummary().subscribe((summary) => {
+      this.series.set([
+        { name: 'Demandes de devis', data: summary.quotesByMonth },
+        { name: 'Candidatures', data: summary.applicationsByMonth },
+      ]);
+    });
+  }
 
   ngAfterViewInit() {
     flatpickr(this.datepicker.nativeElement, {
@@ -44,17 +56,14 @@ export class StatisticsChartComponent implements AfterViewInit {
       },
     });
   }
-  // Chiffres d'exemple en attendant un endpoint d'agrégation côté backend.
-  public series: ApexAxisChartSeries = [
-    {
-      name: 'Demandes de devis',
-      data: [10, 14, 12, 16, 15, 13, 18, 20, 22, 24, 27, 24],
-    },
-    {
-      name: 'Candidatures',
-      data: [6, 8, 7, 9, 11, 10, 12, 13, 15, 17, 19, 17],
-    },
-  ];
+  // Demandes de devis/candidatures reçues mois par mois (année en cours) — mis à jour dans
+  // ngOnInit via DashboardStatsApi, vide le temps que l'appel réseau aboutisse. Signal, pas un
+  // simple champ : l'app tourne sans zone.js (voir package.json), une mutation de champ brut
+  // dans un callback RxJS ne déclenche pas la mise à jour de l'input [series] du <apx-chart>.
+  public series = signal<ApexAxisChartSeries>([
+    { name: 'Demandes de devis', data: [] },
+    { name: 'Candidatures', data: [] },
+  ]);
 
   public chart: ApexChart = {
     fontFamily: 'Outfit, sans-serif',

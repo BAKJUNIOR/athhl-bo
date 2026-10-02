@@ -45,6 +45,9 @@ export const environment = {
       updateStatus: (quoteId: number | string) => `api/v1/quotes/${quoteId}/status`,
       byId: (quoteId: number | string) => `api/v1/quotes/${quoteId}`,
     },
+    dashboard: {
+      summary: 'api/v1/dashboard/summary',
+    },
     applications: {
       list: 'api/v1/applications',
       updateStatus: (applicationId: number | string) => `api/v1/applications/${applicationId}/status`,

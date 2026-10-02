@@ -6,11 +6,11 @@
     <div class="flex items-end justify-between mt-5">
       <div>
         <span class="text-sm text-gray-500 dark:text-gray-400">Demandes de devis (ce mois)</span>
-        <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ quotesThisMonth }}</h4>
+        <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ quotesThisMonth() }}</h4>
       </div>
-      <app-badge [color]="quotesTrend >= 0 ? 'success' : 'error'">
-        <span [innerHTML]="(quotesTrend >= 0 ? icons.arrowUpIcon : icons.arrowDownIcon) | safeHtml"></span>
-        {{ (quotesTrend >= 0 ? '+' : '') + quotesTrend }}%
+      <app-badge [color]="quotesTrend() >= 0 ? 'success' : 'error'">
+        <span [innerHTML]="(quotesTrend() >= 0 ? icons.arrowUpIcon : icons.arrowDownIcon) | safeHtml"></span>
+        {{ (quotesTrend() >= 0 ? '+' : '') + quotesTrend() }}%
       </app-badge>
     </div>
   </div>
@@ -23,11 +23,11 @@
     <div class="flex items-end justify-between mt-5">
       <div>
         <span class="text-sm text-gray-500 dark:text-gray-400">Candidatures (ce mois)</span>
-        <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ applicationsThisMonth }}</h4>
+        <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ applicationsThisMonth() }}</h4>
       </div>
-      <app-badge [color]="applicationsTrend >= 0 ? 'success' : 'error'">
-        <span [innerHTML]="(applicationsTrend >= 0 ? icons.arrowUpIcon : icons.arrowDownIcon) | safeHtml"></span>
-        {{ (applicationsTrend >= 0 ? '+' : '') + applicationsTrend }}%
+      <app-badge [color]="applicationsTrend() >= 0 ? 'success' : 'error'">
+        <span [innerHTML]="(applicationsTrend() >= 0 ? icons.arrowUpIcon : icons.arrowDownIcon) | safeHtml"></span>
+        {{ (applicationsTrend() >= 0 ? '+' : '') + applicationsTrend() }}%
       </app-badge>
     </div>
   </div>

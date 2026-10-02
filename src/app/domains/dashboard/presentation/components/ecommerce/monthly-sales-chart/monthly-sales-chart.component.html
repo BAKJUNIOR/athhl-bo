@@ -31,13 +31,13 @@
   </div>
 
   <div class="-mt-2">
-    <apx-chart [series]="series" [chart]="chart" [labels]="labels" [plotOptions]="plotOptions" [dataLabels]="dataLabels"
+    <apx-chart [series]="series()" [chart]="chart" [labels]="labels" [plotOptions]="plotOptions" [dataLabels]="dataLabels"
       [stroke]="stroke" [legend]="legend" [fill]="fill" [tooltip]="tooltip" [states]="states"
       [colors]="colors"></apx-chart>
   </div>
 
   <div class="flex items-center justify-center gap-6 border-t border-gray-100 pb-5 pt-4 dark:border-white/[0.05]">
-    @for (slice of slices; track slice.label) {
+    @for (slice of slices(); track slice.label) {
       <div class="flex items-center gap-2.5">
         <span class="h-2.5 w-2.5 shrink-0 rounded-full" [style.background-color]="slice.color"></span>
         <div>
