@@ -80,6 +80,10 @@ export const environment = {
       get: 'api/v1/about-page',
       update: 'api/v1/about-page',
     },
+    homePage: {
+      get: 'api/v1/home-page',
+      update: 'api/v1/home-page',
+    },
     partners: {
       get: 'api/v1/partners',
       update: 'api/v1/partners',

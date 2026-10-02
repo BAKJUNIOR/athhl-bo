@@ -99,6 +99,11 @@ export class AppSidebarComponent {
           path: '/about-page',
           icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v.5M12 11v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
         },
+        {
+          name: "Page d'accueil",
+          path: '/home-page',
+          icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 11.5 12 4l8 7.5M6 10v9a1 1 0 001 1h3v-5h4v5h3a1 1 0 001-1v-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        },
       ],
     },
   ];
