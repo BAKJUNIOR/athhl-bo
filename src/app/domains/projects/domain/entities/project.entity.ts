@@ -5,35 +5,53 @@ export function projectStatusLabel(status: ProjectStatus): string {
 }
 
 /**
- * Reprend la structure `Shot` du front (domains/vitrine/presentation/pages/projects/
- * projects.component.ts) : {image, title, caption, wide?}. `featured` pilote l'apparition
- * dans la mosaïque de la home (aujourd'hui juste 5 images sans métadonnée côté front),
- * `status` la visibilité sur la page /projets.
+ * Reprend les champs attendus par `Project` côté Athl_logistics-front
+ * (domains/vitrine/infrastructure/data/projects.data.ts). Chaque projet appartient à un métier
+ * (serviceId/serviceSlug) — la page /projets du site groupe les projets par métier. `featured`
+ * pilote en plus la vignette "à la une" de l'accueil, indépendamment de ce regroupement.
  */
 export interface Project {
   id: number;
+  slug: string;
+  serviceId: number;
+  serviceSlug: string;
   titleFr: string;
   titleEn: string;
-  captionFr: string;
-  captionEn: string;
+  locationFr: string;
+  locationEn: string;
+  typologyFr: string;
+  typologyEn: string;
+  year: string;
+  descriptionFr: string;
+  descriptionEn: string;
   image: string;
+  gallery: string[];
   featured: boolean;
-  wide: boolean;
+  sortOrder: number;
   status: ProjectStatus;
   updatedAt: string;
 }
 
-export type ProjectUpsertRequest = Omit<Project, 'id' | 'updatedAt'>;
+// Le slug est généré une seule fois par le backend à la création (voir Athl_logistics-backend,
+// ProjectServiceImpl) et reste ensuite immuable : le BO ne l'édite jamais, il l'affiche seulement.
+export type ProjectUpsertRequest = Omit<Project, 'id' | 'slug' | 'serviceSlug' | 'updatedAt'>;
 
 export function emptyProjectForm(): ProjectUpsertRequest {
   return {
+    serviceId: 0,
     titleFr: '',
     titleEn: '',
-    captionFr: '',
-    captionEn: '',
+    locationFr: '',
+    locationEn: '',
+    typologyFr: '',
+    typologyEn: '',
+    year: '',
+    descriptionFr: '',
+    descriptionEn: '',
     image: '',
+    gallery: [],
     featured: false,
-    wide: false,
+    sortOrder: 0,
     status: 'draft',
   };
 }

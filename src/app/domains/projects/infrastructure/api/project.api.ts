@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { Project, ProjectUpsertRequest } from '../../domain/entities/project.entity';
 
-/** Endpoint réservé ADMIN — pas encore implémenté côté backend (voir domains/services). */
 @Injectable({ providedIn: 'root' })
 export class ProjectApi {
   private readonly http = inject(HttpClient);
@@ -13,6 +12,10 @@ export class ProjectApi {
 
   list(): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.base}/${this.ep.list}`);
+  }
+
+  getById(id: number): Observable<Project> {
+    return this.http.get<Project>(`${this.base}/${this.ep.byId(id)}`);
   }
 
   create(payload: ProjectUpsertRequest): Observable<Project> {

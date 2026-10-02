@@ -14,6 +14,7 @@ import { QuotesListComponent } from './domains/quotes/presentation/pages/quotes-
 import { ApplicationsListComponent } from './domains/applications/presentation/pages/applications-list/applications-list.component';
 import { TeamListComponent } from './domains/team/presentation/pages/team-list/team-list.component';
 import { ProjectsListComponent } from './domains/projects/presentation/pages/projects-list/projects-list.component';
+import { ProjectFormComponent } from './domains/projects/presentation/pages/project-form/project-form.component';
 import { SiteSettingsPageComponent } from './domains/site-settings/presentation/pages/site-settings-page/site-settings-page.component';
 import { AboutPagePageComponent } from './domains/about-page/presentation/pages/about-page-page/about-page-page.component';
 import { PopupsListComponent } from './domains/popups/presentation/pages/popups-list/popups-list.component';
@@ -104,6 +105,18 @@ export const routes: Routes = [
         component:ProjectsListComponent,
         canActivate:[adminGuard],
         title:'Réalisations / Projets | ATHL-HABITAT&LOGISTIC'
+      },
+      {
+        path:'projects/new',
+        component:ProjectFormComponent,
+        canActivate:[adminGuard],
+        title:'Nouveau projet | ATHL-HABITAT&LOGISTIC'
+      },
+      {
+        path:'projects/:id/edit',
+        component:ProjectFormComponent,
+        canActivate:[adminGuard],
+        title:'Modifier le projet | ATHL-HABITAT&LOGISTIC'
       },
       {
         path:'site-settings',

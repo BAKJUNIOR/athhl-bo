@@ -88,7 +88,7 @@
                     }
                     <div>
                       <span class="block font-medium text-gray-800 text-theme-sm dark:text-white/90">{{ p.titleFr || '(sans titre)' }}</span>
-                      <span class="block text-theme-xs text-gray-500 dark:text-gray-400">{{ p.captionFr || '—' }}</span>
+                      <span class="block text-theme-xs text-gray-500 dark:text-gray-400">{{ p.locationFr || '—' }} @if (p.typologyFr) { · {{ p.typologyFr }} }</span>
                     </div>
                   </div>
                 </td>
@@ -159,97 +159,6 @@
     </div>
   }
 </app-component-card>
-
-<!-- Modale : nouveau / modifier un projet -->
-<app-modal [isOpen]="formOpen()" (close)="closeForm()" className="max-w-lg w-full m-4 p-6">
-  <h3 class="mb-1 text-lg font-semibold text-gray-800 dark:text-white/90">
-    {{ editingId() ? 'Modifier le projet' : 'Nouveau projet' }}
-  </h3>
-  <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">Affiché sur la page Projets, et sur l'accueil si mis en avant.</p>
-
-  @if (formError()) {
-    <div class="mb-5 rounded-lg border border-error-500 bg-error-50 px-4 py-3 text-sm text-error-600 dark:border-error-500/30 dark:bg-error-500/15 dark:text-error-400">
-      {{ formError() }}
-    </div>
-  }
-
-  <form (ngSubmit)="submitForm()" class="space-y-5">
-    <div>
-      <app-label>Image</app-label>
-      <div class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-white/[0.02]">
-        @if (form().image) {
-          <img [src]="form().image" alt="Image du projet" class="h-full w-full object-cover" />
-        } @else {
-          <span class="text-xs text-gray-400">Aucune image</span>
-        }
-        <label for="project-image-upload" class="absolute bottom-2 right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-theme-xs dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400">
-          <input id="project-image-upload" type="file" accept="image/*" class="hidden" (change)="onImageSelected($event)" />
-          @if (uploadingImage()) {
-            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
-          } @else {
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          }
-        </label>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <div>
-        <app-label>Titre — FR <span class="text-error-500">*</span></app-label>
-        <app-input-field
-          [value]="form().titleFr"
-          (valueChange)="updateForm('titleFr', $any($event))"
-          placeholder="Villa contemporaine"
-          [error]="titleFrMissing"
-          [hint]="titleFrMissing ? 'Le titre en français est requis.' : undefined"
-        />
-      </div>
-      <div>
-        <app-label>Titre — EN</app-label>
-        <app-input-field
-          [value]="form().titleEn"
-          (valueChange)="updateForm('titleEn', $any($event))"
-          placeholder="Contemporary villa"
-        />
-      </div>
-      <div>
-        <app-label>Légende — FR</app-label>
-        <app-input-field
-          [value]="form().captionFr"
-          (valueChange)="updateForm('captionFr', $any($event))"
-          placeholder="Construction neuve — Abidjan"
-        />
-      </div>
-      <div>
-        <app-label>Légende — EN</app-label>
-        <app-input-field
-          [value]="form().captionEn"
-          (valueChange)="updateForm('captionEn', $any($event))"
-          placeholder="New build — Abidjan"
-        />
-      </div>
-    </div>
-
-    <div class="flex flex-wrap items-center gap-6">
-      <app-switch label="Mis en avant sur l'accueil" [defaultChecked]="form().featured" (valueChange)="updateForm('featured', $any($event))" />
-      <app-switch label="Affichage large" [defaultChecked]="form().wide" (valueChange)="updateForm('wide', $any($event))" />
-    </div>
-
-    <div class="flex items-center justify-between border-t border-gray-100 pt-5 dark:border-white/[0.05]">
-      <app-switch label="Publié" [defaultChecked]="form().status === 'published'" (valueChange)="onStatusChange($event)" />
-      <app-badge size="sm" [color]="form().status === 'published' ? 'success' : 'warning'">
-        {{ statusLabel(form().status) }}
-      </app-badge>
-    </div>
-
-    <div class="flex gap-3">
-      <app-button class="flex-1" className="w-full" variant="outline" size="sm" [disabled]="saving()" (btnClick)="closeForm()">Annuler</app-button>
-      <app-button class="flex-1" className="w-full" size="sm" [disabled]="saving()" (btnClick)="submitForm()">
-        {{ saving() ? 'Enregistrement...' : (editingId() ? 'Enregistrer' : 'Ajouter') }}
-      </app-button>
-    </div>
-  </form>
-</app-modal>
 
 <!-- Modale : confirmation d'action -->
 @if (confirm(); as c) {
