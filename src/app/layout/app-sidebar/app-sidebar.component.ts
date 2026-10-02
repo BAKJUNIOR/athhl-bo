@@ -69,6 +69,11 @@ export class AppSidebarComponent {
       path: "/projects",
     },
     {
+      icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h12a2 2 0 012 2v12l4-2V6a4 4 0 00-4-4H6a2 2 0 00-2 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v14a2 2 0 002 2h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 9h6M8 13h6M8 17h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+      name: "Actualités",
+      path: "/news",
+    },
+    {
       // Regroupées en sous-menu : contenus simples (CRUD léger, pas de page dédiée
       // création/édition) — évite de multiplier les entrées de premier niveau.
       icon: `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>`,

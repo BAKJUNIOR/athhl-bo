@@ -68,6 +68,14 @@ export const environment = {
       unpublish: (projectId: number | string) => `api/v1/projects/${projectId}/unpublish`,
       byId: (projectId: number | string) => `api/v1/projects/${projectId}`,
     },
+    news: {
+      list: 'api/v1/news',
+      create: 'api/v1/news',
+      update: (newsId: number | string) => `api/v1/news/${newsId}`,
+      publish: (newsId: number | string) => `api/v1/news/${newsId}/publish`,
+      unpublish: (newsId: number | string) => `api/v1/news/${newsId}/unpublish`,
+      byId: (newsId: number | string) => `api/v1/news/${newsId}`,
+    },
     siteContact: {
       get: 'api/v1/site-settings/contact',
       update: 'api/v1/site-settings/contact',

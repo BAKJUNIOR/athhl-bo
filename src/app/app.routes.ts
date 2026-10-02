@@ -15,6 +15,8 @@ import { ApplicationsListComponent } from './domains/applications/presentation/p
 import { TeamListComponent } from './domains/team/presentation/pages/team-list/team-list.component';
 import { ProjectsListComponent } from './domains/projects/presentation/pages/projects-list/projects-list.component';
 import { ProjectFormComponent } from './domains/projects/presentation/pages/project-form/project-form.component';
+import { NewsListComponent } from './domains/news/presentation/pages/news-list/news-list.component';
+import { NewsFormComponent } from './domains/news/presentation/pages/news-form/news-form.component';
 import { SiteSettingsPageComponent } from './domains/site-settings/presentation/pages/site-settings-page/site-settings-page.component';
 import { AboutPagePageComponent } from './domains/about-page/presentation/pages/about-page-page/about-page-page.component';
 import { PopupsListComponent } from './domains/popups/presentation/pages/popups-list/popups-list.component';
@@ -117,6 +119,24 @@ export const routes: Routes = [
         component:ProjectFormComponent,
         canActivate:[adminGuard],
         title:'Modifier le projet | ATHL-HABITAT&LOGISTIC'
+      },
+      {
+        path:'news',
+        component:NewsListComponent,
+        canActivate:[adminGuard],
+        title:'Actualités | ATHL-HABITAT&LOGISTIC'
+      },
+      {
+        path:'news/new',
+        component:NewsFormComponent,
+        canActivate:[adminGuard],
+        title:'Nouvelle actualité | ATHL-HABITAT&LOGISTIC'
+      },
+      {
+        path:'news/:id/edit',
+        component:NewsFormComponent,
+        canActivate:[adminGuard],
+        title:'Modifier l\'actualité | ATHL-HABITAT&LOGISTIC'
       },
       {
         path:'site-settings',

@@ -1,0 +1,265 @@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+  <app-page-breadcrumb [pageTitle]="isEdit ? 'Modifier l\'actualité' : 'Nouvelle actualité'" />
+</div>
+
+<!-- Retour -->
+<a routerLink="/news" class="mb-6 -mt-4 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" class="stroke-current"><path d="M12.7083 5L7.5 10.2083L12.7083 15.4167" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  Retour à la liste des actualités
+</a>
+
+@if (loading()) {
+  <div class="flex items-center justify-center rounded-2xl border border-gray-200 bg-white py-20 text-gray-400 dark:border-gray-800 dark:bg-white/[0.03]">
+    <svg class="h-6 w-6 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+    <span class="ml-3 text-sm">Chargement de l'actualité...</span>
+  </div>
+}
+
+@if (!loading() && loadError()) {
+  <div class="flex flex-col items-center gap-3 rounded-2xl border border-gray-200 bg-white py-20 text-center dark:border-gray-800 dark:bg-white/[0.03]">
+    <span class="max-w-md text-sm text-gray-500 dark:text-gray-400">{{ loadError() }}</span>
+    <app-button variant="outline" size="sm" routerLink="/news">Retour à la liste</app-button>
+  </div>
+}
+
+@if (!loading() && !loadError()) {
+  <form (ngSubmit)="submitForm()">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
+      <!-- Colonne principale -->
+      <div class="space-y-6 lg:col-span-2">
+
+        @if (formError()) {
+          <div class="rounded-lg border border-error-500 bg-error-50 px-4 py-3 text-sm text-error-600 dark:border-error-500/30 dark:bg-error-500/15 dark:text-error-400">
+            {{ formError() }}
+          </div>
+        }
+
+        <app-component-card title="Informations générales" desc="Titre, date et catégorie utilisés sur la liste et la fiche détail.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Date <span class="text-error-500">*</span></app-label>
+              <app-input-field
+                type="date"
+                [value]="form().date"
+                (valueChange)="updateForm('date', $any($event))"
+                [error]="dateMissing"
+                [hint]="dateMissing ? 'La date est requise.' : undefined"
+              />
+            </div>
+            <div>
+              <app-label>Adresse (URL)</app-label>
+              <div class="flex h-11 items-center rounded-lg border border-gray-300 bg-gray-50 px-4 text-sm text-gray-500 dark:border-gray-700 dark:bg-white/[0.02] dark:text-gray-400">
+                @if (currentSlug()) {
+                  /actualites/{{ currentSlug() }}
+                } @else {
+                  <span class="text-gray-400">Générée automatiquement à la création</span>
+                }
+              </div>
+            </div>
+            <div>
+              <app-label>Titre — FR <span class="text-error-500">*</span></app-label>
+              <app-input-field
+                [value]="form().titleFr"
+                (valueChange)="updateForm('titleFr', $any($event))"
+                placeholder="Livraison d'un nouveau chantier à Abidjan"
+                [error]="titleFrMissing"
+                [hint]="titleFrMissing ? 'Le titre en français est requis.' : undefined"
+              />
+            </div>
+            <div>
+              <app-label>Titre — EN</app-label>
+              <app-input-field
+                [value]="form().titleEn"
+                (valueChange)="updateForm('titleEn', $any($event))"
+                placeholder="Delivery of a new site in Abidjan"
+              />
+            </div>
+            <div>
+              <app-label>Catégorie — FR</app-label>
+              <app-input-field
+                [value]="form().categoryFr"
+                (valueChange)="updateForm('categoryFr', $any($event))"
+                placeholder="Chantiers"
+              />
+            </div>
+            <div>
+              <app-label>Catégorie — EN</app-label>
+              <app-input-field
+                [value]="form().categoryEn"
+                (valueChange)="updateForm('categoryEn', $any($event))"
+                placeholder="Sites"
+              />
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Résumé — FR</app-label>
+              <app-text-area
+                [value]="form().excerptFr"
+                (valueChange)="updateForm('excerptFr', $any($event))"
+                [rows]="3"
+                placeholder="Affiché sur la liste des actualités."
+              />
+            </div>
+            <div>
+              <app-label>Résumé — EN</app-label>
+              <app-text-area
+                [value]="form().excerptEn"
+                (valueChange)="updateForm('excerptEn', $any($event))"
+                [rows]="3"
+                placeholder="Shown on the news list."
+              />
+            </div>
+          </div>
+
+          <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Corps de l'article — FR</app-label>
+              <app-text-area
+                [value]="form().bodyFr"
+                (valueChange)="updateForm('bodyFr', $any($event))"
+                [rows]="8"
+                placeholder="Affiché sur la fiche détail, en paragraphes séparés par une ligne vide."
+              />
+            </div>
+            <div>
+              <app-label>Corps de l'article — EN</app-label>
+              <app-text-area
+                [value]="form().bodyEn"
+                (valueChange)="updateForm('bodyEn', $any($event))"
+                [rows]="8"
+                placeholder="Shown on the detail page, as paragraphs separated by a blank line."
+              />
+            </div>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Citation" desc="Facultatif — laisser vide si l'article n'a pas de citation.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <app-label>Texte — FR</app-label>
+              <app-text-area
+                [value]="form().quoteTextFr"
+                (valueChange)="updateForm('quoteTextFr', $any($event))"
+                [rows]="2"
+              />
+            </div>
+            <div class="sm:col-span-2">
+              <app-label>Texte — EN</app-label>
+              <app-text-area
+                [value]="form().quoteTextEn"
+                (valueChange)="updateForm('quoteTextEn', $any($event))"
+                [rows]="2"
+              />
+            </div>
+            <div>
+              <app-label>Nom — FR</app-label>
+              <app-input-field [value]="form().quoteNameFr" (valueChange)="updateForm('quoteNameFr', $any($event))" placeholder="Direction des opérations" />
+            </div>
+            <div>
+              <app-label>Nom — EN</app-label>
+              <app-input-field [value]="form().quoteNameEn" (valueChange)="updateForm('quoteNameEn', $any($event))" />
+            </div>
+            <div>
+              <app-label>Rôle — FR</app-label>
+              <app-input-field [value]="form().quoteRoleFr" (valueChange)="updateForm('quoteRoleFr', $any($event))" placeholder="ATHL — Pôle Construction & rénovation" />
+            </div>
+            <div>
+              <app-label>Rôle — EN</app-label>
+              <app-input-field [value]="form().quoteRoleEn" (valueChange)="updateForm('quoteRoleEn', $any($event))" />
+            </div>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Réseaux sociaux" desc="Facultatif — lien vers la republication de CETTE actualité sur chaque réseau (pas les comptes généraux du site, voir Paramètres du site). Affiché sur la fiche détail uniquement si renseigné.">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <app-label>Facebook</app-label>
+              <app-input-field [value]="form().facebookUrl" (valueChange)="updateForm('facebookUrl', $any($event))" placeholder="https://facebook.com/..." />
+            </div>
+            <div>
+              <app-label>LinkedIn</app-label>
+              <app-input-field [value]="form().linkedinUrl" (valueChange)="updateForm('linkedinUrl', $any($event))" placeholder="https://linkedin.com/..." />
+            </div>
+            <div>
+              <app-label>YouTube</app-label>
+              <app-input-field [value]="form().youtubeUrl" (valueChange)="updateForm('youtubeUrl', $any($event))" placeholder="https://youtube.com/watch?v=..." />
+            </div>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Image" desc="Visuel principal de l'actualité (liste et fiche détail).">
+          <div class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-white/[0.02]">
+            @if (form().image) {
+              <img [src]="form().image" alt="Image de l'actualité" class="h-full w-full object-cover" />
+            } @else {
+              <span class="text-xs text-gray-400">Aucune image</span>
+            }
+            <label
+              for="news-image-upload"
+              class="absolute bottom-2 right-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 shadow-theme-xs dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
+            >
+              <input id="news-image-upload" type="file" accept="image/*" class="hidden" (change)="onImageSelected($event)" />
+              @if (uploadingImage()) {
+                <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/></svg>
+              } @else {
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              }
+            </label>
+          </div>
+        </app-component-card>
+      </div>
+
+      <!-- Colonne latérale : statut, actions, aperçu -->
+      <div class="space-y-6 lg:sticky lg:top-6 lg:self-start">
+        <app-component-card title="Publication">
+          <div class="flex items-center justify-between">
+            <app-switch
+              label="Publié"
+              [defaultChecked]="form().status === 'published'"
+              (valueChange)="onStatusChange($event)"
+            />
+            <app-badge size="sm" [color]="form().status === 'published' ? 'success' : 'warning'">
+              {{ statusLabel(form().status) }}
+            </app-badge>
+          </div>
+          <p class="mt-3 text-xs text-gray-400">
+            Une actualité en brouillon reste modifiable ici mais n'apparaît pas sur le site vitrine.
+          </p>
+
+          <div class="mt-5 border-t border-gray-100 pt-5 dark:border-white/[0.05]">
+            <app-switch label="À la une" [defaultChecked]="form().featured" (valueChange)="updateForm('featured', $any($event))" />
+          </div>
+
+          <div class="mt-5 flex gap-3 border-t border-gray-100 pt-5 dark:border-white/[0.05]">
+            <app-button class="flex-1" className="w-full" variant="outline" size="sm" [disabled]="saving()" (btnClick)="cancel()">Annuler</app-button>
+            <app-button class="flex-1" className="w-full" size="sm" [disabled]="saving()" (btnClick)="submitForm()">
+              {{ saving() ? 'Enregistrement...' : (isEdit ? 'Enregistrer' : "Créer l'actualité") }}
+            </app-button>
+          </div>
+        </app-component-card>
+
+        <app-component-card title="Aperçu" desc="Ce que verra un visiteur du site vitrine.">
+          <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
+            <div class="flex aspect-video w-full items-center justify-center bg-gray-100 dark:bg-white/[0.03]">
+              @if (form().image) {
+                <img [src]="form().image" alt="" class="h-full w-full object-cover" />
+              } @else {
+                <span class="text-xs text-gray-400">Aucune image</span>
+              }
+            </div>
+            <div class="p-4">
+              <span class="text-xs font-medium text-purple-500">{{ form().categoryFr || '—' }}</span>
+              <h5 class="mt-1 font-medium text-gray-800 dark:text-white/90">
+                {{ form().titleFr || "Titre de l'actualité" }}
+              </h5>
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ form().date || '—' }}</p>
+            </div>
+          </div>
+        </app-component-card>
+      </div>
+    </div>
+  </form>
+}
