@@ -16,6 +16,7 @@ import { CloudinaryUploadService } from '../../../../../core/services/cloudinary
 import { ProjectUpsertRequest, emptyProjectForm, projectStatusLabel } from '../../../domain/entities/project.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { SortableImagesComponent } from '../../../../../shared/ui/sortable-images/sortable-images.component';
 
 @Component({
   selector: 'app-project-form',
@@ -31,6 +32,7 @@ import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util
     TextAreaComponent,
     SwitchComponent,
     SelectComponent,
+    SortableImagesComponent,
   ],
   templateUrl: './project-form.component.html',
 })
@@ -128,6 +130,10 @@ export class ProjectFormComponent {
   // Galerie
   removeGalleryImage(index: number): void {
     this.form.update((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }));
+  }
+
+  reorderGallery(images: string[]): void {
+    this.updateForm('gallery', images);
   }
 
   // Upload d'images (Cloudinary)
