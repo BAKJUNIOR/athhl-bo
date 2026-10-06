@@ -4,11 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApplicationStatus, JobApplication } from '../../domain/entities/job-application.entity';
 
-/**
- * Endpoint réservé ADMIN — pas encore implémenté côté backend (même situation que
- * ServiceApi/JobApi). Lecture seule + changement de statut, puisque ce sont des
- * soumissions de visiteurs, pas un contenu que le BO crée.
- */
+
 @Injectable({ providedIn: 'root' })
 export class ApplicationApi {
   private readonly http = inject(HttpClient);

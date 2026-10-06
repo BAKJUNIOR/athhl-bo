@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, QueryList, ViewChildren, ChangeDetectorRef, inject } from '@angular/core';
 import { SidebarService } from '../../core/services/sidebar.service';
+import { StorageService } from '../../core/services/storage.service';
+import { JwtService } from '../../core/services/jwt.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { SafeHtmlPipe } from '../../shared/pipe/safe-html.pipe';
 import { combineLatest, Subscription } from 'rxjs';
@@ -123,11 +125,14 @@ export class AppSidebarComponent {
     },
   ];
 
+  private readonly isSuperAdmin = inject(JwtService).isSuperAdmin(inject(StorageService).getToken());
+
   // Une seule structure pour piloter le template : un groupe = un préfixe (pour les clés
   // de sous-menu) + un libellé optionnel (null = pas d'en-tête, ex. Tableau de bord seul).
   navGroups: { label: string | null; prefix: string; items: NavItem[] }[] = [
     { label: null, prefix: 'top', items: this.topItems },
-    { label: 'Administration', prefix: 'admin', items: this.adminItems },
+    // « Gestion des utilisateurs » n'est proposée qu'au SUPER_ADMIN (voir superAdminGuard).
+    { label: 'Administration', prefix: 'admin', items: this.adminItems.filter((item) => item.path !== '/users' || this.isSuperAdmin) },
     { label: 'Demandes reçues', prefix: 'inbox', items: this.inboxItems },
     { label: 'Contenu du site vitrine', prefix: 'content', items: this.contentItems },
   ];

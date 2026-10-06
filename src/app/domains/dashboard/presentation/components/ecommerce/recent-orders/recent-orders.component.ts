@@ -3,6 +3,8 @@ import { RouterModule } from '@angular/router';
 import { BadgeComponent } from '../../../../../../shared/ui/badge/badge.component';
 import { SafeHtmlPipe } from '../../../../../../shared/pipe/safe-html.pipe';
 import { DashboardStatsApi, DashboardSummary } from '../../../../infrastructure/api/dashboard-stats.api';
+import { StorageService } from '../../../../../../core/services/storage.service';
+import { JwtService } from '../../../../../../core/services/jwt.service';
 
 type KpiStatus = 'action' | 'ok';
 
@@ -30,6 +32,8 @@ const usersIcon = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none"
 })
 export class RecentOrdersComponent implements OnInit {
   private readonly dashboardStatsApi = inject(DashboardStatsApi);
+  // La ligne « Utilisateurs du BO » mène à une page réservée au SUPER_ADMIN.
+  private readonly isSuperAdmin = inject(JwtService).isSuperAdmin(inject(StorageService).getToken());
 
   // Alimenté dans ngOnInit via DashboardStatsApi (voir domains/quotes, applications,
   // services, jobs, team, user — mêmes sources que les boîtes de réception/pages de contenu).
@@ -39,7 +43,7 @@ export class RecentOrdersComponent implements OnInit {
 
   ngOnInit(): void {
     this.dashboardStatsApi.getSummary().subscribe((summary) => {
-      this.kpis.set(this.buildKpis(summary));
+      this.kpis.set(this.buildKpis(summary).filter((kpi) => kpi.path !== '/users' || this.isSuperAdmin));
     });
   }
 
