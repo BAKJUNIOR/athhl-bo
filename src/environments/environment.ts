@@ -3,7 +3,7 @@
  */
 export const environment = {
   production: false,
-  apiUrl: 'https://api.athl.athl-logistique.com',
+  apiUrl: 'http://localhost:8080',
   endpoints: {
     auth: {
       authenticate: 'api/v1/authenticate',

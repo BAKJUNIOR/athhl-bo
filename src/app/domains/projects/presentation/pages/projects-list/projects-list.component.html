@@ -69,6 +69,7 @@
           <thead class="border-b border-gray-100 dark:border-white/[0.05]">
             <tr>
               <th class="px-5 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Projet</th>
+              <th class="px-4 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Métier</th>
               <th class="px-4 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Mis en avant</th>
               <th class="px-4 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400">Statut</th>
               <th class="px-4 py-3 text-end text-theme-xs font-medium text-gray-500 dark:text-gray-400">Actions</th>
@@ -91,6 +92,9 @@
                       <span class="block text-theme-xs text-gray-500 dark:text-gray-400">{{ p.locationFr || '—' }} @if (p.typologyFr) { · {{ p.typologyFr }} }</span>
                     </div>
                   </div>
+                </td>
+                <td class="px-4 py-4 text-start">
+                  <span class="text-theme-sm text-gray-700 dark:text-gray-300">{{ serviceLabel(p.serviceSlug) }}</span>
                 </td>
                 <td class="px-4 py-4 text-start">
                   @if (p.featured) {
@@ -146,7 +150,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="4">
+                <td colspan="5">
                   <div class="flex flex-col items-center gap-2 py-16 text-center text-gray-400">
                     <span class="text-sm">Aucun projet ne correspond à cette recherche.</span>
                   </div>
