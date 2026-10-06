@@ -53,19 +53,7 @@
 
         <div class="mt-5">
           <app-label>Images de fond <span class="font-normal text-gray-400">(défilent en rotation sur l'accueil)</span></app-label>
-          <div class="flex flex-wrap gap-3">
-            @for (img of content().heroImages; track $index) {
-              <div class="group relative h-20 w-32 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
-                <img [src]="img" alt="Image de fond" class="h-full w-full object-cover" />
-                <button
-                  type="button"
-                  (click)="removeHeroImage($index)"
-                  class="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="stroke-current"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
-                </button>
-              </div>
-            }
+          <app-sortable-images [images]="content().heroImages" tileClass="h-20 w-32" alt="Image de fond" (reorder)="reorderHeroImages($event)" (remove)="removeHeroImage($event)">
             <label
               for="hero-image-upload"
               class="flex h-20 w-32 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-gray-300 text-gray-400 hover:border-brand-300 hover:text-brand-500 dark:border-gray-700"
@@ -78,7 +66,7 @@
                 <span class="text-[11px]">Ajouter</span>
               }
             </label>
-          </div>
+          </app-sortable-images>
         </div>
       </app-component-card>
 

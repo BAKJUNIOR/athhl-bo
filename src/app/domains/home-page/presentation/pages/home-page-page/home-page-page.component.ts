@@ -11,13 +11,14 @@ import { CloudinaryUploadService } from '../../../../../core/services/cloudinary
 import { HomePageContent, emptyHomePageContent } from '../../../domain/entities/home-page.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { SortableImagesComponent } from '../../../../../shared/ui/sortable-images/sortable-images.component';
 
 type PillarKey = 'Construction' | 'Mobility' | 'Import';
 
 @Component({
   selector: 'app-home-page-page',
   standalone: true,
-  imports: [PageBreadcrumbComponent, ComponentCardComponent, ButtonComponent, LabelComponent, InputFieldComponent, TextAreaComponent],
+  imports: [PageBreadcrumbComponent, ComponentCardComponent, ButtonComponent, LabelComponent, InputFieldComponent, TextAreaComponent, SortableImagesComponent],
   templateUrl: './home-page-page.component.html',
 })
 export class HomePagePageComponent {
@@ -98,6 +99,10 @@ export class HomePagePageComponent {
   // Galerie d'images de fond du bandeau (défilement en rotation côté front)
   removeHeroImage(index: number): void {
     this.content.update((c) => ({ ...c, heroImages: c.heroImages.filter((_, i) => i !== index) }));
+  }
+
+  reorderHeroImages(images: string[]): void {
+    this.content.update((c) => ({ ...c, heroImages: images }));
   }
 
   onHeroImageSelected(event: Event): void {
