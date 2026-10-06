@@ -20,6 +20,8 @@ export interface AboutWorkforceTab {
   titleEn: string;
   image: string;
   heroImage: string;
+  /** Lien YouTube, Vimeo ou .mp4 — lu dans une fenêtre sur le site ; vide = pas de vidéo pour cet onglet. */
+  videoUrl: string | null;
   leadFr: string;
   leadEn: string;
   bullet1Fr: string;
@@ -119,7 +121,7 @@ export function emptyAboutWorkforceStat(): AboutWorkforceStat {
 
 export function emptyAboutWorkforceTab(order: number): AboutWorkforceTab {
   return {
-    number: String(order).padStart(2, '0'), titleFr: '', titleEn: '', image: '', heroImage: '',
+    number: String(order).padStart(2, '0'), titleFr: '', titleEn: '', image: '', heroImage: '', videoUrl: '',
     leadFr: '', leadEn: '',
     bullet1Fr: '', bullet1En: '', bullet2Fr: '', bullet2En: '',
     bullet3Fr: '', bullet3En: '', bullet4Fr: '', bullet4En: '',
