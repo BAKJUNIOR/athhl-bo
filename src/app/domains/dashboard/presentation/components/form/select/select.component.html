@@ -20,8 +20,12 @@
     </option>
     <!-- Map over options -->
     @for (option of options; track $index) {
+    <!-- [selected] par option : le [value] du <select> est appliqué avant que le @for ne crée les
+         options (données chargées en asynchrone) — sans ça, le navigateur affiche la 1re option
+         alors que la vraie valeur est différente, et c'est cette vraie valeur qui part à l'enregistrement. -->
     <option
       [value]="option.value"
+      [selected]="option.value === value"
       class="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
     >
       {{ option.label }}

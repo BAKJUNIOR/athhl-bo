@@ -12,6 +12,7 @@ import { DropdownComponent } from '../../../../../shared/ui/dropdown/dropdown.co
 import { DropdownItemComponent } from '../../../../../shared/ui/dropdown/dropdown-item/dropdown-item.component';
 import { SelectComponent, Option } from '../../../../dashboard/presentation/components/form/select/select.component';
 import { ProjectApi } from '../../../infrastructure/api/project.api';
+import { ServiceApi } from '../../../../services/infrastructure/api/service.api';
 import { Project, projectStatusLabel } from '../../../domain/entities/project.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
@@ -47,6 +48,7 @@ interface ConfirmState {
 export class ProjectsListComponent {
   private readonly router = inject(Router);
   private readonly projectApi = inject(ProjectApi);
+  private readonly serviceApi = inject(ServiceApi);
   private readonly toast = inject(ToastService);
 
   projects = signal<Project[]>([]);
@@ -75,6 +77,12 @@ export class ProjectsListComponent {
 
   statusLabel = projectStatusLabel;
 
+  // Libellé du métier par slug, pour la colonne "Métier" (la liste des projets ne renvoie que le slug).
+  private readonly serviceLabels = signal<Record<string, string>>({});
+  serviceLabel(slug: string): string {
+    return this.serviceLabels()[slug] ?? slug;
+  }
+
   openMenuId = signal<number | null>(null);
 
   // ── Confirmation (publier / dépublier / supprimer) ──
@@ -83,6 +91,14 @@ export class ProjectsListComponent {
 
   constructor() {
     this.loadProjects();
+    this.loadServices();
+  }
+
+  private loadServices(): void {
+    // En cas d'échec, la colonne affiche simplement le slug du métier.
+    this.serviceApi.list().subscribe({
+      next: (services) => this.serviceLabels.set(Object.fromEntries(services.map((s) => [s.slug, s.titleFr]))),
+    });
   }
 
   loadProjects(): void {
