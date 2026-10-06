@@ -10,12 +10,7 @@ export interface CloudinaryUploadResponse {
   [key: string]: unknown;
 }
 
-/**
- * Upload de fichiers (images, vidéos, PDF) pour le BO. Passe par notre backend
- * (POST /api/v1/uploads, réservé ADMIN) plutôt que par un appel direct à Cloudinary :
- * l'API_KEY/API_SECRET Cloudinary ne doivent jamais atteindre le navigateur — c'est le
- * backend qui les détient et fait l'upload réel (voir CloudinaryConfig côté Athl_back).
- */
+
 @Injectable({ providedIn: 'root' })
 export class CloudinaryUploadService {
   private readonly http = inject(HttpClient);
@@ -36,10 +31,7 @@ export class CloudinaryUploadService {
 
     return this.http.post<CloudinaryUploadResponse>(`${this.base}/${environment.endpoints.uploads.create}`, formData).pipe(
       map((res) => ({ ...res, secure_url: CloudinaryUploadService.normalizeDeliveryUrl(res.secure_url) })),
-      // Les composants consommateurs attendent un Error classique (err?.message) — pattern
-      // hérité de l'ancien appel fetch() direct à Cloudinary, conservé pour ne pas les retoucher tous.
-      // La taille est vérifiée par le backend (message "Fichier trop lourd (x Mo)…" repris tel quel).
-      // Seul cas sans message backend : un 413 du proxy nginx (fichier > 25 Mo, bloqué avant le back).
+
       catchError((err: HttpErrorResponse) =>
         throwError(() => new Error(extractApiErrorMessage(err, err.status === 413
           ? 'Fichier trop lourd. Taille maximum : 10 Mo.'

@@ -17,11 +17,7 @@ export function extractApiErrorMessage(err: unknown, fallback: string): string {
   return fallback;
 }
 
-/**
- * `err.error` est déjà un objet si la requête a utilisé le parsing JSON par défaut.
- * Si un appel a forcé `responseType: 'text'`, le corps d'erreur reste une chaîne
- * brute (potentiellement du JSON) : on tente de la parser plutôt que de l'afficher telle quelle.
- */
+
 function resolveErrorBody(raw: unknown): Record<string, unknown> | null {
   if (raw && typeof raw === 'object') return raw as Record<string, unknown>;
   if (typeof raw === 'string' && raw.trim().startsWith('{')) {

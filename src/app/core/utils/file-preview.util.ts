@@ -1,6 +1,3 @@
-// Aide à l'affichage des pièces jointes (devis) et CV (candidatures) : ce sont des URLs Cloudinary
-// brutes envoyées par les visiteurs — on distingue les images (miniature) des autres documents
-// (lien avec nom de fichier) plutôt que d'afficher l'URL telle quelle.
 const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
 
 function extensionOf(url: string): string {

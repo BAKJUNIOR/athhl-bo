@@ -25,6 +25,7 @@ import { PopupFormComponent } from './domains/popups/presentation/pages/popup-fo
 import { NotificationsPageComponent } from './domains/notifications/presentation/pages/notifications-page/notifications-page.component';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { superAdminGuard } from './core/guards/super-admin.guard';
 
 export const routes: Routes = [
   {
@@ -46,7 +47,7 @@ export const routes: Routes = [
       {
         path:'users',
         component:UsersListComponent,
-        canActivate:[adminGuard],
+        canActivate:[superAdminGuard],
         title:'Gestion des utilisateurs | ATHL-HABITAT&LOGISTIC'
       },
       {
