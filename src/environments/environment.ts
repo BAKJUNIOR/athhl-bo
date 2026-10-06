@@ -3,7 +3,7 @@
  */
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080',
+  apiUrl: 'https://api.athl.athl-logistique.com',
   endpoints: {
     auth: {
       authenticate: 'api/v1/authenticate',
@@ -54,7 +54,8 @@ export const environment = {
     },
     applications: {
       list: 'api/v1/applications',
-      updateStatus: (applicationId: number | string) => `api/v1/applications/${applicationId}/status`,
+      updateStatus: (applicationId: number | string) =>
+        `api/v1/applications/${applicationId}/status`,
       byId: (applicationId: number | string) => `api/v1/applications/${applicationId}`,
     },
     team: {
