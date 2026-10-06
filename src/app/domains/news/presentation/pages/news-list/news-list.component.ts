@@ -15,6 +15,8 @@ import { NewsApi } from '../../../infrastructure/api/news.api';
 import { NewsArticle, newsStatusLabel } from '../../../domain/entities/news.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { paginate } from '../../../../../core/pagination/pagination';
+import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
 
 type ConfirmType = 'publish' | 'unpublish' | 'delete';
 
@@ -41,6 +43,7 @@ interface ConfirmState {
     DropdownComponent,
     DropdownItemComponent,
     SelectComponent,
+    TablePaginationComponent,
   ],
   templateUrl: './news-list.component.html',
 })
@@ -72,6 +75,7 @@ export class NewsListComponent {
       return matchesQuery && matchesStatus;
     });
   });
+  readonly pager = paginate(this.filteredArticles);
 
   statusLabel = newsStatusLabel;
 

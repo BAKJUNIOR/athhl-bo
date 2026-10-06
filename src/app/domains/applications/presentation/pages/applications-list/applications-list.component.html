@@ -113,7 +113,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            @for (a of filteredApplications(); track a.id) {
+            @for (a of pager.items(); track a.id) {
               <tr class="cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.02]" (click)="openDetail(a)">
                 <td class="px-5 py-4 text-start sm:px-6">
                   <span class="block font-medium text-gray-800 text-theme-sm dark:text-white/90">{{ a.name }}</span>
@@ -184,6 +184,7 @@
           </tbody>
         </table>
       </div>
+      <app-table-pagination [pager]="pager" />
     </div>
   }
 </app-component-card>

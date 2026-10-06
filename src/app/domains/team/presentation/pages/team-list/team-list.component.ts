@@ -12,6 +12,8 @@ import { CloudinaryUploadService } from '../../../../../core/services/cloudinary
 import { TeamMember, TeamMemberUpsertRequest, emptyTeamMemberForm } from '../../../domain/entities/team-member.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { paginate } from '../../../../../core/pagination/pagination';
+import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
 
 @Component({
   selector: 'app-team-list',
@@ -24,6 +26,7 @@ import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util
     LabelComponent,
     InputFieldComponent,
     TextAreaComponent,
+    TablePaginationComponent,
   ],
   templateUrl: './team-list.component.html',
 })
@@ -37,6 +40,7 @@ export class TeamListComponent {
   error = signal<string | null>(null);
 
   sortedMembers = computed(() => [...this.members()].sort((a, b) => a.sortOrder - b.sortOrder));
+  readonly pager = paginate(this.sortedMembers);
 
   // ── Modale création/édition ──
   formOpen = signal(false);

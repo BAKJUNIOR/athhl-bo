@@ -110,7 +110,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            @for (s of filteredServices(); track s.id) {
+            @for (s of pager.items(); track s.id) {
               <tr class="cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.02]" (click)="openEdit(s)">
                 <td class="px-5 py-4 text-start sm:px-6">
                   <div class="flex items-center gap-3">
@@ -195,6 +195,7 @@
           </tbody>
         </table>
       </div>
+      <app-table-pagination [pager]="pager" />
     </div>
   }
 </app-component-card>

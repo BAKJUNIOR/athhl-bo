@@ -133,7 +133,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            @for (u of filteredUsers(); track u.id) {
+            @for (u of pager.items(); track u.id) {
               <tr>
                 <td class="px-5 py-4 text-start sm:px-6">
                   <div class="flex items-center gap-3">
@@ -227,6 +227,7 @@
           </tbody>
         </table>
       </div>
+      <app-table-pagination [pager]="pager" />
     </div>
   }
 </app-component-card>

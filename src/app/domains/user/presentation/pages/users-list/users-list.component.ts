@@ -15,6 +15,8 @@ import { UserApi } from '../../../infrastructure/api/user.api';
 import { RegisterUserRequest, RoleName, UserSummary, userFullName, userInitials, userRoleLabel } from '../../../domain/entities/user.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { paginate } from '../../../../../core/pagination/pagination';
+import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
 
 type ConfirmType = 'block' | 'unblock' | 'reset-password' | 'delete';
 
@@ -42,6 +44,7 @@ interface ConfirmState {
     LabelComponent,
     InputFieldComponent,
     SelectComponent,
+    TablePaginationComponent,
   ],
   templateUrl: './users-list.component.html',
 })
@@ -95,6 +98,7 @@ export class UsersListComponent {
       return matchesQuery && matchesRole && matchesStatus;
     });
   });
+  readonly pager = paginate(this.filteredUsers);
 
   stats = computed(() => {
     const list = this.users();
