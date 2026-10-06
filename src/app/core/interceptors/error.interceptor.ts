@@ -9,8 +9,10 @@ import { extractApiErrorMessage } from '../utils/api-error.util';
 
 /** Endpoints publics : un 401 dessus signifie identifiants/code invalides, pas une session expirée. */
 const PUBLIC_PATHS = ['authenticate', 'users/activation', 'users/resend-activation-code'];
-/** Endpoints dont le composant appelant affiche déjà le message d'erreur lui-même (inline). */
-const INLINE_ERROR_PATHS = [...PUBLIC_PATHS, 'users/change-password', 'users/register'];
+/** Endpoints dont le composant appelant affiche déjà le message d'erreur lui-même (inline).
+ *  `api/v1/uploads` : chaque écran d'upload affiche déjà l'erreur en toast (via CloudinaryUploadService),
+ *  sans cette exclusion le message apparaissait deux fois. */
+const INLINE_ERROR_PATHS = [...PUBLIC_PATHS, 'users/change-password', 'users/register', 'api/v1/uploads'];
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toast = inject(ToastService);
