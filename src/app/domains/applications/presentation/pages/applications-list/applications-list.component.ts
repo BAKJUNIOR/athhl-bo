@@ -14,6 +14,8 @@ import { ApplicationStatus, JobApplication, applicationStatusLabel } from '../..
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
 import { fileNameOf, isImageUrl } from '../../../../../core/utils/file-preview.util';
+import { paginate } from '../../../../../core/pagination/pagination';
+import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
 
 @Component({
   selector: 'app-applications-list',
@@ -28,6 +30,7 @@ import { fileNameOf, isImageUrl } from '../../../../../core/utils/file-preview.u
     DropdownComponent,
     DropdownItemComponent,
     SelectComponent,
+    TablePaginationComponent,
   ],
   templateUrl: './applications-list.component.html',
 })
@@ -61,6 +64,7 @@ export class ApplicationsListComponent {
       return matchesQuery && matchesStatus;
     });
   });
+  readonly pager = paginate(this.filteredApplications);
 
   stats = computed(() => {
     const list = this.applications();

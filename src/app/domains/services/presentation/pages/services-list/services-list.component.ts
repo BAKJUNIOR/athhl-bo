@@ -15,6 +15,8 @@ import { ServiceApi } from '../../../infrastructure/api/service.api';
 import { Service, serviceStatusLabel } from '../../../domain/entities/service.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { paginate } from '../../../../../core/pagination/pagination';
+import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
 
 type ConfirmType = 'publish' | 'unpublish' | 'delete';
 
@@ -41,6 +43,7 @@ interface ConfirmState {
     DropdownComponent,
     DropdownItemComponent,
     SelectComponent,
+    TablePaginationComponent,
   ],
   templateUrl: './services-list.component.html',
 })
@@ -74,6 +77,7 @@ export class ServicesListComponent {
       return matchesQuery && matchesStatus;
     });
   });
+  readonly pager = paginate(this.filteredServices);
 
   stats = computed(() => {
     const list = this.services();

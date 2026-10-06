@@ -21,6 +21,8 @@ import {
 } from '../../../domain/entities/job-offer.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { paginate } from '../../../../../core/pagination/pagination';
+import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
 
 type ConfirmType = 'publish' | 'unpublish' | 'delete';
 
@@ -47,6 +49,7 @@ interface ConfirmState {
     DropdownComponent,
     DropdownItemComponent,
     SelectComponent,
+    TablePaginationComponent,
   ],
   templateUrl: './jobs-list.component.html',
 })
@@ -92,6 +95,7 @@ export class JobsListComponent {
       return matchesQuery && matchesDomain && matchesStatus;
     });
   });
+  readonly pager = paginate(this.filteredJobs);
 
   stats = computed(() => {
     const list = this.jobs();

@@ -15,6 +15,8 @@ import { PopupApi } from '../../../infrastructure/api/popup.api';
 import { Popup, POPUP_PAGE_OPTIONS, popupPageLabel, popupTypeLabel } from '../../../domain/entities/popup.entity';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { paginate } from '../../../../../core/pagination/pagination';
+import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
 
 type ConfirmType = 'activate' | 'deactivate' | 'delete';
 
@@ -41,6 +43,7 @@ interface ConfirmState {
     DropdownComponent,
     DropdownItemComponent,
     SelectComponent,
+    TablePaginationComponent,
   ],
   templateUrl: './popups-list.component.html',
 })
@@ -88,6 +91,7 @@ export class PopupsListComponent {
       return matchesQuery && matchesPage && matchesStatus;
     });
   });
+  readonly pager = paginate(this.filteredPopups);
 
   stats = computed(() => {
     const list = this.popups();
