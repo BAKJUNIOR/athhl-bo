@@ -100,6 +100,10 @@ export const environment = {
       get: 'api/v1/contact-page',
       update: 'api/v1/contact-page',
     },
+    pageHeaders: {
+      get: 'api/v1/page-headers',
+      update: 'api/v1/page-headers',
+    },
     uploads: {
       create: 'api/v1/uploads',
     },
