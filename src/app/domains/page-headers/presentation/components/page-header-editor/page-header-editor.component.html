@@ -1,0 +1,55 @@
+<div class="mb-6 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+  <div class="flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
+    <div class="min-w-0">
+      <h3 class="text-sm font-medium text-gray-800 dark:text-white/90">
+        En-tête de la page <span class="font-normal text-gray-400">{{ pageUrl }} du site</span>
+      </h3>
+      <p class="mt-0.5 truncate text-theme-xs text-gray-500 dark:text-gray-400">
+        @if (loading()) { Chargement... } @else if (error()) { {{ error() }} } @else { {{ summary() }} }
+      </p>
+    </div>
+    @if (error()) {
+      <app-button variant="outline" size="sm" (btnClick)="load()">Réessayer</app-button>
+    } @else if (!loading() && !open()) {
+      <app-button variant="outline" size="sm" (btnClick)="open.set(true)">Modifier</app-button>
+    }
+  </div>
+
+  @if (open() && !loading() && !error()) {
+    <div class="border-t border-gray-100 px-5 py-5 sm:px-6 dark:border-white/[0.05]">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <app-label>Surtitre — FR</app-label>
+          <app-input-field [value]="header().eyebrowFr ?? ''" (valueChange)="update('eyebrowFr', $any($event))" />
+        </div>
+        <div>
+          <app-label>Surtitre — EN</app-label>
+          <app-input-field [value]="header().eyebrowEn ?? ''" (valueChange)="update('eyebrowEn', $any($event))" />
+        </div>
+        <div>
+          <app-label>Titre — FR</app-label>
+          <app-input-field [value]="header().titleFr ?? ''" (valueChange)="update('titleFr', $any($event))" />
+        </div>
+        <div>
+          <app-label>Titre — EN</app-label>
+          <app-input-field [value]="header().titleEn ?? ''" (valueChange)="update('titleEn', $any($event))" />
+        </div>
+        <div>
+          <app-label>Texte — FR</app-label>
+          <app-text-area [value]="header().subtitleFr ?? ''" (valueChange)="update('subtitleFr', $any($event))" [rows]="3" />
+        </div>
+        <div>
+          <app-label>Texte — EN</app-label>
+          <app-text-area [value]="header().subtitleEn ?? ''" (valueChange)="update('subtitleEn', $any($event))" [rows]="3" />
+        </div>
+      </div>
+      <div class="mt-5 flex items-center justify-between gap-3">
+        <p class="text-xs text-gray-400">Visible sur le site dès l'enregistrement. Un champ vide reprend le texte par défaut du site.</p>
+        <div class="flex shrink-0 gap-3">
+          <app-button variant="outline" size="sm" [disabled]="saving()" (btnClick)="cancel()">Annuler</app-button>
+          <app-button size="sm" [disabled]="saving()" (btnClick)="save()">{{ saving() ? 'Enregistrement...' : 'Enregistrer' }}</app-button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

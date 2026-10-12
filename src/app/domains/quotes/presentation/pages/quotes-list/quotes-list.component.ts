@@ -16,6 +16,7 @@ import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util
 import { fileNameOf, isImageUrl } from '../../../../../core/utils/file-preview.util';
 import { paginate } from '../../../../../core/pagination/pagination';
 import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
+import { PageHeaderEditorComponent } from '../../../../page-headers/presentation/components/page-header-editor/page-header-editor.component';
 
 @Component({
   selector: 'app-quotes-list',
@@ -31,6 +32,7 @@ import { TablePaginationComponent } from '../../../../../shared/ui/table-paginat
     DropdownItemComponent,
     SelectComponent,
     TablePaginationComponent,
+    PageHeaderEditorComponent,
   ],
   templateUrl: './quotes-list.component.html',
 })
