@@ -18,6 +18,7 @@ import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
 import { paginate } from '../../../../../core/pagination/pagination';
 import { TablePaginationComponent } from '../../../../../shared/ui/table-pagination/table-pagination.component';
+import { PageHeaderEditorComponent } from '../../../../page-headers/presentation/components/page-header-editor/page-header-editor.component';
 
 type ConfirmType = 'publish' | 'unpublish' | 'delete';
 
@@ -45,6 +46,7 @@ interface ConfirmState {
     DropdownItemComponent,
     SelectComponent,
     TablePaginationComponent,
+    PageHeaderEditorComponent,
   ],
   templateUrl: './projects-list.component.html',
 })

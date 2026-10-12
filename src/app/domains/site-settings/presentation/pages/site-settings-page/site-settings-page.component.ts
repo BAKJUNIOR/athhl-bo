@@ -16,6 +16,7 @@ import { CONTACT_PAGE_DEFAULTS, ContactPageContent } from '../../../domain/entit
 import { CloudinaryUploadService } from '../../../../../core/services/cloudinary-upload.service';
 import { ToastService } from '../../../../../core/services/toast.service';
 import { extractApiErrorMessage } from '../../../../../core/utils/api-error.util';
+import { PageHeaderEditorComponent } from '../../../../page-headers/presentation/components/page-header-editor/page-header-editor.component';
 
 type SettingsSection = 'general' | 'partners' | 'footer' | 'contactPage';
 
@@ -36,6 +37,7 @@ const SETTINGS_SECTIONS: { key: SettingsSection; label: string }[] = [
     LabelComponent,
     InputFieldComponent,
     TextAreaComponent,
+    PageHeaderEditorComponent,
   ],
   templateUrl: './site-settings-page.component.html',
 })
