@@ -34,8 +34,8 @@ export class HomePagePageComponent {
   content = signal<HomePageContent>(emptyHomePageContent());
 
   readonly pillars: { key: PillarKey; label: string }[] = [
-    { key: 'Construction', label: 'Construction & rénovation' },
-    { key: 'Mobility', label: 'Mobilité, VTC & Livraison' },
+    { key: 'Construction', label: 'Construction' },
+    { key: 'Mobility', label: 'VTC & Livraison' },
     { key: 'Import', label: 'Import & logistique' },
   ];
 
